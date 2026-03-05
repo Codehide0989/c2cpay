@@ -22,8 +22,8 @@ const SystemCheck: React.FC<SystemCheckProps> = ({ onComplete }) => {
             setMsg('Pinging Server...');
             const start = Date.now();
 
-            // Use diagnose endpoint for detailed info
-            const res = await fetch('/api/diagnose');
+            // Use status endpoint for connection check
+            const res = await fetch('/api/status');
             if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
 
             const data = await res.json();

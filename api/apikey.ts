@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, hasFirebaseCredentials, isFirebaseInitialized } from '../lib/firebase';
+import { db, hasFirebaseCredentials, isFirebaseInitialized, initFirebase } from '../lib/firebase';
 import { Timestamp } from "firebase-admin/firestore";
 import * as crypto from 'crypto';
 
@@ -25,30 +25,15 @@ export default async function handler(
     console.log(`[API Key Handler] ${request.method} ${request.url}`);
 
     try {
-        // Check Firebase credentials first
-        if (!hasFirebaseCredentials()) {
-            console.error("❌ Firebase credentials missing");
-            return response.status(500).json({ 
-                error: "Server Configuration Error",
-                message: "Firebase credentials are not configured properly.",
-                details: "Contact administrator to set up FIREBASE_PROJECT_ID, CLIENT_EMAIL, and PRIVATE_KEY"
+        try {
+            initFirebase();
+        } catch (initError: any) {
+            console.error("❌ API Key API - Firebase Init Error:", initError.message);
+            return response.status(500).json({
+                error: "Database Connection Failed",
+                message: "Could not connect to Firebase.",
+                details: initError.message
             });
-        }
-
-        // Verify Firebase is initialized
-        if (!isFirebaseInitialized()) {
-            console.warn("⚠️ Firebase not initialized, attempting initialization...");
-            try {
-                // Trigger initialization through db access
-                await db.collection('_health').limit(1).get();
-            } catch (initError: any) {
-                console.error("❌ Firebase initialization failed:", initError);
-                return response.status(500).json({
-                    error: "Database Connection Failed",
-                    message: "Could not connect to Firebase.",
-                    details: initError.message
-                });
-            }
         }
 
         // 1. Authenticate Admin
@@ -56,7 +41,7 @@ export default async function handler(
 
         if (!adminPin) {
             console.warn("⚠️ Missing admin PIN in request headers");
-            return response.status(401).json({ 
+            return response.status(401).json({
                 error: "Unauthorized",
                 message: "Admin PIN required in x-admin-pin header"
             });
@@ -66,10 +51,10 @@ export default async function handler(
             // Verify PIN against DB
             const adminsRef = db.collection('admins');
             const snapshot = await adminsRef.limit(1).get();
-            
+
             if (snapshot.empty) {
                 console.error("❌ No admin found in database");
-                return response.status(500).json({ 
+                return response.status(500).json({
                     error: "Configuration Error",
                     message: "Admin account not configured"
                 });
@@ -78,7 +63,7 @@ export default async function handler(
             const adminData = snapshot.docs[0].data();
             if (adminData.pin !== adminPin) {
                 console.warn("⚠️ Invalid PIN attempt");
-                return response.status(401).json({ 
+                return response.status(401).json({
                     error: "Unauthorized",
                     message: "Invalid admin PIN"
                 });
@@ -87,7 +72,7 @@ export default async function handler(
             console.log("✅ Admin authenticated successfully");
         } catch (authError: any) {
             console.error("❌ Auth verification error:", authError);
-            return response.status(500).json({ 
+            return response.status(500).json({
                 error: "Authentication Failed",
                 message: "Could not verify admin credentials",
                 details: authError.message
@@ -110,7 +95,7 @@ export default async function handler(
                 return response.status(200).json({ keys });
             } catch (e: any) {
                 console.error("❌ Error fetching API keys:", e);
-                return response.status(500).json({ 
+                return response.status(500).json({
                     error: "Database Error",
                     message: "Failed to retrieve API keys",
                     details: e.message
@@ -122,10 +107,10 @@ export default async function handler(
         if (request.method === 'POST') {
             try {
                 const { name } = request.body || {};
-                
+
                 if (!name || name.trim() === '') {
                     console.warn("⚠️ API key generation attempted without name");
-                    return response.status(400).json({ 
+                    return response.status(400).json({
                         error: "Validation Error",
                         message: "API key name is required"
                     });
@@ -144,15 +129,15 @@ export default async function handler(
                 const docRef = await keysCollection.add(newDoc);
                 console.log(`✅ API key created successfully with ID: ${docRef.id}`);
 
-                return response.status(201).json({ 
-                    success: true, 
-                    apiKey: newKey, 
+                return response.status(201).json({
+                    success: true,
+                    apiKey: newKey,
                     message: "Save this key! It won't be visible again.",
                     keyId: docRef.id
                 });
             } catch (e: any) {
                 console.error("❌ Error generating API key:", e);
-                return response.status(500).json({ 
+                return response.status(500).json({
                     error: "Generation Failed",
                     message: "Could not generate API key",
                     details: e.message
@@ -164,10 +149,10 @@ export default async function handler(
         if (request.method === 'DELETE') {
             try {
                 const { id } = request.query;
-                
+
                 if (!id) {
                     console.warn("⚠️ Delete attempted without key ID");
-                    return response.status(400).json({ 
+                    return response.status(400).json({
                         error: "Validation Error",
                         message: "Key ID is required"
                     });
@@ -176,11 +161,11 @@ export default async function handler(
                 console.log(`🗑️ Deleting API key: ${id}`);
                 await keysCollection.doc(id as string).delete();
                 console.log(`✅ API key deleted successfully`);
-                
+
                 return response.status(200).json({ success: true, message: "API key revoked" });
             } catch (e: any) {
                 console.error("❌ Error deleting API key:", e);
-                return response.status(500).json({ 
+                return response.status(500).json({
                     error: "Deletion Failed",
                     message: "Could not revoke API key",
                     details: e.message

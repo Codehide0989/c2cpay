@@ -17,15 +17,20 @@ const parsePrivateKey = (key: string | undefined): string => {
   if (!key) return "";
 
   try {
-    const keyWithNewlines = key
-      .replace(/\\n/g, '\n')  // Replace literal \n with actual newlines
-      .replace(/"/g, '');     // Remove extra quotes if present
+    // If the key is wrapped in quotes, remove them
+    let cleanedKey = key.trim();
+    if (cleanedKey.startsWith('"') && cleanedKey.endsWith('"')) {
+      cleanedKey = cleanedKey.substring(1, cleanedKey.length - 1);
+    }
+
+    // Handle escaped newlines (\n) which are common in environment variables
+    const keyWithNewlines = cleanedKey.replace(/\\n/g, '\n');
 
     // Check if the key looks basically valid (contains BEGIN PRIVATE KEY)
     if (!keyWithNewlines.includes("BEGIN PRIVATE KEY")) {
-      console.warn("⚠️ Warning: FIREBASE_PRIVATE_KEY Env Var might be malformed (missing standard header). Attempting to use as-is or repairing...");
-      // Attempt to construct if just the base64 part was provided (rare but possible edge case)
-      if (!keyWithNewlines.includes("-----")) {
+      console.warn("⚠️ Warning: FIREBASE_PRIVATE_KEY Env Var might be malformed (missing standard header).");
+      // If it doesn't have the header but looks like a key, try to wrap it
+      if (keyWithNewlines.length > 100 && !keyWithNewlines.includes("-----")) {
         return `-----BEGIN PRIVATE KEY-----\n${keyWithNewlines}\n-----END PRIVATE KEY-----\n`;
       }
     }
@@ -36,14 +41,13 @@ const parsePrivateKey = (key: string | undefined): string => {
   }
 };
 
-const serviceAccount = {
-  // Prioritize FIREBASE_* variables (for serverless/Vercel) over VITE_FIREBASE_*
+const getServiceAccount = () => ({
   projectId: getEnv("FIREBASE_PROJECT_ID") || getEnv("VITE_FIREBASE_PROJECT_ID"),
   clientEmail: getEnv("FIREBASE_CLIENT_EMAIL") || getEnv("VITE_FIREBASE_CLIENT_EMAIL"),
   privateKey: parsePrivateKey(
     getEnv("FIREBASE_PRIVATE_KEY") || getEnv("VITE_FIREBASE_PRIVATE_KEY")
   ),
-};
+});
 
 // Global singleton state
 interface FirebaseState {
@@ -56,27 +60,29 @@ interface FirebaseState {
 
 const state: FirebaseState = {};
 
-// Initialization function - actually connects to Firebase
-// Exported so API handlers can explicitly initialize and handle errors
+/**
+ * Robust Firebase initialization for Serverless Functions
+ */
 export const initFirebase = () => {
   if (state.app) return state; // Already initialized
-  if (state.initError) throw state.initError; // Previous failure
+
+  const sa = getServiceAccount();
 
   // Log credential presence (SAFE LOGGING - NO VALUES)
   console.log("🔧 Firebase Init - Checking Credentials:", {
-    projectId: !!serviceAccount.projectId,
-    clientEmail: !!serviceAccount.clientEmail,
-    privateKey: !!serviceAccount.privateKey,
-    privateKeyLength: serviceAccount.privateKey?.length || 0,
+    projectId: !!sa.projectId,
+    clientEmail: !!sa.clientEmail,
+    privateKey: !!sa.privateKey,
+    privateKeyLength: sa.privateKey?.length || 0,
     timestamp: new Date().toISOString()
   });
 
   // Verify credentials
-  if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
+  if (!sa.projectId || !sa.clientEmail || !sa.privateKey) {
     const missingVars = [];
-    if (!serviceAccount.projectId) missingVars.push('FIREBASE_PROJECT_ID');
-    if (!serviceAccount.clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
-    if (!serviceAccount.privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
+    if (!sa.projectId) missingVars.push('FIREBASE_PROJECT_ID');
+    if (!sa.clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
+    if (!sa.privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
 
     const error = new Error(`Missing Firebase credentials: ${missingVars.join(', ')}`);
     state.initError = error;
@@ -85,14 +91,15 @@ export const initFirebase = () => {
   }
 
   try {
-    if (getApps().length === 0) {
+    const apps = getApps();
+    if (apps.length === 0) {
       state.app = initializeApp({
-        credential: cert(serviceAccount),
-        storageBucket: getEnv("FIREBASE_STORAGE_BUCKET") || getEnv("VITE_FIREBASE_STORAGE_BUCKET") || "cyberimg-nexus.firebasestorage.app"
+        credential: cert(sa),
+        storageBucket: getEnv("FIREBASE_STORAGE_BUCKET") || getEnv("VITE_FIREBASE_STORAGE_BUCKET") || `${sa.projectId}.firebasestorage.app`
       });
       console.log("✅ Firebase Admin Initialized successfully");
     } else {
-      state.app = getApp();
+      state.app = apps[0];
       console.log("✅ Using existing Firebase Admin app");
     }
 
@@ -106,6 +113,7 @@ export const initFirebase = () => {
     console.error("❌ Firebase Initialization Failed:", {
       error: e.message,
       code: e.code,
+      stack: e.stack,
       timestamp: new Date().toISOString()
     });
     state.initError = e;
@@ -128,6 +136,8 @@ const createLazyProxy = <T>(serviceName: keyof FirebaseState) => {
         const value = service[prop];
         return typeof value === 'function' ? value.bind(service) : value;
       } catch (e: any) {
+        console.error(`🔴 Firebase Proxy Error [${String(serviceName)}.${String(prop)}]:`, e.message);
+
         // Log better info for common Firestore errors
         if (e.message && (e.code === 5 || e.message.includes('NOT_FOUND') || e.message.includes('not found'))) {
           throw new Error(`Firebase ${serviceName} not found: Ensure Project ID is correct and Firestore is enabled in Console.`);
@@ -149,8 +159,8 @@ export const auth = createLazyProxy<any>('auth');
 export const isFirebaseInitialized = (): boolean => {
   try {
     if (state.app) return true;
-    // Don't auto-init here, just check if we have enough to potentially init
-    return hasFirebaseCredentials();
+    const sa = getServiceAccount();
+    return !!(sa.projectId && sa.clientEmail && sa.privateKey);
   } catch {
     return false;
   }
@@ -158,10 +168,8 @@ export const isFirebaseInitialized = (): boolean => {
 
 // Helper function to check if credentials are available
 export const hasFirebaseCredentials = (): boolean => {
-  const projectId = getEnv("FIREBASE_PROJECT_ID") || getEnv("VITE_FIREBASE_PROJECT_ID");
-  const clientEmail = getEnv("FIREBASE_CLIENT_EMAIL") || getEnv("VITE_FIREBASE_CLIENT_EMAIL");
-  const privateKey = getEnv("FIREBASE_PRIVATE_KEY") || getEnv("VITE_FIREBASE_PRIVATE_KEY");
-  return !!(projectId && clientEmail && privateKey);
+  const sa = getServiceAccount();
+  return !!(sa.projectId && sa.clientEmail && sa.privateKey);
 };
 
 // Health check function for API endpoints
@@ -172,9 +180,7 @@ export const checkFirebaseHealth = async (): Promise<{ healthy: boolean; error?:
     }
 
     // Attempt to initialize if not already done
-    if (!state.app) {
-      initFirebase();
-    }
+    initFirebase();
 
     // Try a simple read operation
     await db.collection('_health').limit(1).get();

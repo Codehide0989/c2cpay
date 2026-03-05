@@ -8,16 +8,10 @@ export default async function handler(
     response: VercelResponse
 ) {
     try {
-        if (!hasFirebaseCredentials()) {
-            return response.status(500).json({ error: "Backend Config Error: Firebase Credentials Missing" });
-        }
-
         try {
-            if (!isFirebaseInitialized()) {
-                initFirebase();
-            }
+            initFirebase();
         } catch (initError: any) {
-            console.error("❌ Payment API - Firebase Init Error:", initError);
+            console.error("❌ Payment API - Firebase Init Error:", initError.message);
             return response.status(500).json({ error: "Database Connection Failed", details: initError.message });
         }
 

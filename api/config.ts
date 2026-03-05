@@ -1,30 +1,18 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, isFirebaseInitialized, hasFirebaseCredentials } from '../lib/firebase';
+import { db, isFirebaseInitialized, hasFirebaseCredentials, initFirebase } from '../lib/firebase';
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
 export default async function handler(
     request: VercelRequest,
     response: VercelResponse
 ) {
-    // Check Firebase credentials before proceeding
-    if (!hasFirebaseCredentials()) {
-        return response.status(500).json({
-            error: "Backend Error: Firebase Admin Credentials missing in environment",
-            message: "Please configure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in your .env.local file or Vercel environment variables.",
-            details: {
-                missing: {
-                    FIREBASE_PROJECT_ID: !process.env.FIREBASE_PROJECT_ID && !process.env.VITE_FIREBASE_PROJECT_ID,
-                    FIREBASE_CLIENT_EMAIL: !process.env.FIREBASE_CLIENT_EMAIL && !process.env.VITE_FIREBASE_CLIENT_EMAIL,
-                    FIREBASE_PRIVATE_KEY: !process.env.FIREBASE_PRIVATE_KEY && !process.env.VITE_FIREBASE_PRIVATE_KEY,
-                }
-            }
-        });
-    }
-
-    if (!isFirebaseInitialized()) {
+    try {
+        initFirebase();
+    } catch (initError: any) {
         return response.status(500).json({
             error: "Backend Error: Firebase Admin SDK not initialized",
-            message: "Firebase credentials are present but initialization failed. Check your private key format and credentials."
+            message: "Firebase credentials are present but initialization failed.",
+            details: initError.message
         });
     }
 

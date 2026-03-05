@@ -10,35 +10,19 @@ export default async function handler(
     console.log(`[Admin API ${requestId}] ${request.method} ${request.url} - ${new Date().toISOString()}`);
 
     try {
-        // Safe check for credentials
-        if (!hasFirebaseCredentials()) {
-            console.error(`❌ [Admin API ${requestId}] Firebase Credentials Missing in Environment`);
-            return response.status(500).json({
-                error: "Configuration Error",
-                message: "Server environment variables for Firebase are missing.",
-                details: "Check FIREBASE_PROJECT_ID, CLIENT_EMAIL, and PRIVATE_KEY.",
-                requestId
-            });
-        }
-
-        // Attempt initialization explicitly to catch hard crashes
+        // Explicitly initialize Firebase for the handler to catch errors early
         try {
-            if (!isFirebaseInitialized()) {
-                console.log(`[Admin API ${requestId}] Initializing Firebase...`);
-                initFirebase();
-            }
+            initFirebase();
         } catch (initError: any) {
-            console.error(`❌ [Admin API ${requestId}] Firebase Init Crash:`, {
-                error: initError.message,
-                timestamp: new Date().toISOString()
-            });
+            console.error(`❌ [Admin API ${requestId}] Firebase Admin Init Error:`, initError.message);
             return response.status(500).json({
-                error: "Database Connection Failed",
-                message: "Could not initialize Firebase Admin SDK.",
+                error: "Database Connection Error",
+                message: "Internal server error connecting to data services.",
                 details: initError.message,
                 requestId
             });
         }
+
 
         const adminsRef = db.collection('admins');
 

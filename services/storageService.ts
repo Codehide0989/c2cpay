@@ -68,14 +68,15 @@ export const getPaymentHistory = async (): Promise<PaymentRecord[]> => {
 
 export const checkDbConnection = async (): Promise<boolean> => {
   try {
-    const res = await fetch('/api/config'); // Simple ping
-    return res.ok;
+    const res = await fetch('/api/status'); // Use /api/status which is designed for this
+    if (res.ok) {
+      const data = await res.json();
+      return data.isConnected === true;
+    }
+    return false;
   } catch (e) {
-    // In local development or if API is offline, we fallback to localStorage
-    // So we return true to "Show Connected" to not alarm the user,
-    // as the app still functions (offline mode).
-    console.warn("[DB] API unreachable, switching to offline mode.");
-    return true;
+    console.warn("[DB] API unreachable or disconnected.");
+    return false;
   }
 };
 

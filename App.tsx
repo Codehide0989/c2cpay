@@ -384,7 +384,7 @@ const App: React.FC = () => {
               {config.title || "Secure Payments"}
             </h1>
             <p className="text-slate-400 text-lg leading-relaxed">
-              Accept UPI payments instantly. Powered by ShopC2C AI for fraud detection and PostgreSQL (Neon) for secure transaction logging.
+              Accept UPI payments instantly. Powered by ShopC2C AI for fraud detection and Firebase Firestore for secure transaction logging.
             </p>
           </div>
 

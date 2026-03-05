@@ -43,11 +43,6 @@ async function startServer() {
     const statusHandler = (await import('../api/status')).default;
     const paymentHandler = (await import('../api/payment')).default;
     const verifyHandler = (await import('../api/verify')).default;
-    const diagnoseHandler = (await import('../api/diagnose')).default;
-    const healthHandler = (await import('../api/health')).default;
-    const testHandler = (await import('../api/test')).default;
-    const testDbHandler = (await import('../api/test_db')).default;
-    const seedHandler = (await import('../api/seed')).default;
     const pushToStorageHandler = (await import('../api/push-to-storage')).default;
 
     console.log("-----------------------------------------");
@@ -102,11 +97,6 @@ async function startServer() {
     app.all('/api/status', adapt(statusHandler));
     app.all('/api/payment', adapt(paymentHandler));
     app.all('/api/verify', adapt(verifyHandler));
-    app.all('/api/diagnose', adapt(diagnoseHandler));
-    app.all('/api/health', adapt(healthHandler));
-    app.all('/api/test', adapt(testHandler));
-    app.all('/api/test_db', adapt(testDbHandler));
-    app.all('/api/seed', adapt(seedHandler));
     app.all('/api/push-to-storage', adapt(pushToStorageHandler));
 
 
