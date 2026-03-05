@@ -43,6 +43,7 @@ const App: React.FC = () => {
   const [isAmountLocked, setIsAmountLocked] = useState(false);
   const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
   const [maintenanceMessage, setMaintenanceMessage] = useState('');
+  const [maintenanceEndTime, setMaintenanceEndTime] = useState<number | null>(null);
   const [generatedLink, setGeneratedLink] = useState('');
   const [history, setHistory] = useState<PaymentRecord[]>([]);
   const [expandedRecord, setExpandedRecord] = useState<string | null>(null);
@@ -94,6 +95,7 @@ const App: React.FC = () => {
       setIsAmountLocked(!!effectiveConfig.amountLocked);
       setIsMaintenanceMode(!!effectiveConfig.maintenanceMode);
       setMaintenanceMessage(effectiveConfig.maintenanceMessage || '');
+      setMaintenanceEndTime(effectiveConfig.maintenanceEndTime || null);
       if (effectiveConfig.am && effectiveConfig.am !== '0') {
         setAmount(effectiveConfig.am);
       }
@@ -114,12 +116,40 @@ const App: React.FC = () => {
           setIsAmountLocked(!!latest.amountLocked);
           setIsMaintenanceMode(!!latest.maintenanceMode);
           setMaintenanceMessage(latest.maintenanceMessage || '');
+          setMaintenanceEndTime(latest.maintenanceEndTime || null);
         }
       }
     }, 5000);
 
     return () => clearInterval(interval);
   }, [isAdminOpen]);
+
+  // Auto-disable maintenance mode logic
+  useEffect(() => {
+    if (config.maintenanceMode && config.maintenanceEndTime) {
+      const checkTimer = () => {
+        const now = Date.now();
+        if (now >= (config.maintenanceEndTime || 0)) {
+          console.log("🕒 Maintenance time ended, auto-disabling maintenance mode...");
+          const updatedConfig = {
+            ...config,
+            maintenanceMode: false,
+            maintenanceEndTime: undefined
+          };
+          saveConfig(updatedConfig).then(() => {
+            setConfig(updatedConfig);
+            setIsMaintenanceMode(false);
+            setMaintenanceEndTime(null);
+          });
+        }
+      };
+
+      const timerInterval = setInterval(checkTimer, 10000); // Check every 10s
+      checkTimer(); // Check immediately
+
+      return () => clearInterval(timerInterval);
+    }
+  }, [config.maintenanceMode, config.maintenanceEndTime]);
 
   // Fetch history when tab changes
   useEffect(() => {
@@ -174,7 +204,8 @@ const App: React.FC = () => {
       amountLocked: isAmountLocked,
       redirectUrl: adminRedirectUrl,
       maintenanceMode: isMaintenanceMode,
-      maintenanceMessage: maintenanceMessage
+      maintenanceMessage: maintenanceMessage,
+      maintenanceEndTime: maintenanceEndTime
     };
 
     // Save to DB
@@ -339,6 +370,7 @@ const App: React.FC = () => {
       {config.maintenanceMode && !isAuthenticated && new URLSearchParams(window.location.search).get('admin') !== 'true' ? (
         <MaintenanceView
           message={config.maintenanceMessage}
+          endTime={config.maintenanceEndTime}
           onAdminClick={() => setIsAdminOpen(true)}
         />
       ) : (
@@ -561,14 +593,46 @@ const App: React.FC = () => {
                           </div>
 
                           {isMaintenanceMode && (
-                            <div className="space-y-1 animate-in slide-in-from-top-2 duration-300">
-                              <label className="text-[10px] text-slate-500 font-bold uppercase ml-1">Maintenance Message</label>
-                              <textarea
-                                value={maintenanceMessage}
-                                onChange={(e) => setMaintenanceMessage(e.target.value)}
-                                placeholder="We'll be back shortly..."
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-white focus:border-rose-500 outline-none min-h-[80px]"
-                              />
+                            <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                              <div className="space-y-1">
+                                <label className="text-[10px] text-slate-500 font-bold uppercase ml-1">Maintenance Message</label>
+                                <textarea
+                                  value={maintenanceMessage}
+                                  onChange={(e) => setMaintenanceMessage(e.target.value)}
+                                  placeholder="We'll be back shortly..."
+                                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-white focus:border-rose-500 outline-none min-h-[60px]"
+                                />
+                              </div>
+
+                              <div className="space-y-2">
+                                <label className="text-[10px] text-slate-500 font-bold uppercase ml-1 block">Set Maintenance Timer</label>
+                                <div className="grid grid-cols-4 gap-2">
+                                  {[5, 15, 30, 60].map((mins) => (
+                                    <button
+                                      key={mins}
+                                      onClick={() => setMaintenanceEndTime(Date.now() + mins * 60 * 1000)}
+                                      className={`py-2 rounded-lg text-xs font-bold transition-all border ${maintenanceEndTime && Math.abs(maintenanceEndTime - (Date.now() + mins * 60 * 1000)) < 10000 ? 'bg-rose-500 border-rose-500 text-white shadow-lg shadow-rose-500/20' : 'bg-slate-900 border-slate-700 text-slate-400 hover:border-rose-500/50'}`}
+                                    >
+                                      {mins}m
+                                    </button>
+                                  ))}
+                                </div>
+                                <div className="flex items-center justify-between gap-2 mt-2">
+                                  <div className="bg-slate-900/50 rounded-lg px-3 py-2 flex-1 border border-slate-800">
+                                    <span className="text-[10px] text-slate-500 uppercase font-bold block">Status</span>
+                                    <span className="text-xs text-white">
+                                      {maintenanceEndTime ? `Ends in ${Math.max(0, Math.ceil((maintenanceEndTime - Date.now()) / 60000))} mins` : 'No timer set'}
+                                    </span>
+                                  </div>
+                                  <button
+                                    onClick={() => setMaintenanceEndTime(null)}
+                                    className="p-3 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 hover:text-white transition-colors"
+                                    title="Reset Timer"
+                                  >
+                                    <RefreshCw className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           )}
                         </div>

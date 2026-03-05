@@ -16,6 +16,7 @@ export interface UPIConfig {
   redirectUrl?: string; // URL to redirect after successful payment
   maintenanceMode?: boolean; // Toggles maintenance screen
   maintenanceMessage?: string; // Custom message for users
+  maintenanceEndTime?: number; // Unix timestamp for when maintenance should end
 }
 
 export interface VerificationResult {
