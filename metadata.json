@@ -1,0 +1,7 @@
+{
+  "name": "ShopC2C - Secure UPI Gateway",
+  "description": "ShopC2C Payment Gateway with AI verification and 3D UI.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
