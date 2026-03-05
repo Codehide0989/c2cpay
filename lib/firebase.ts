@@ -23,17 +23,31 @@ const parsePrivateKey = (key: string | undefined): string => {
       cleanedKey = cleanedKey.substring(1, cleanedKey.length - 1);
     }
 
-    // 2. Handle escaped newlines (literal "\n" characters)
-    // We handle both single backslash \n and double backslash \\n
-    const keyWithNewlines = cleanedKey.replace(/\\n/g, '\n');
+    // 2. Handle cases where the whole JSON service account was pasted into one field
+    if (cleanedKey.startsWith('{') && cleanedKey.endsWith('}')) {
+      try {
+        const json = JSON.parse(cleanedKey);
+        cleanedKey = json.private_key || json.privateKey || cleanedKey;
+      } catch (e) {
+        console.warn("Attempted to parse credential as JSON but failed, assuming it's a raw key.");
+      }
+    }
 
-    // 3. Validation and masking for logs
+    // 3. Handle escaped newlines (literal "\n" characters)
+    // We handle both single backslash \n and double backslash \\n
+    // Also handle \r\n if present
+    const keyWithNewlines = cleanedKey
+      .replace(/\\n/g, '\n')
+      .replace(/\\r/g, '\r')
+      .trim();
+
+    // 4. Validation and masking for logs
     const hasStart = keyWithNewlines.includes("BEGIN PRIVATE KEY");
     const hasEnd = keyWithNewlines.includes("END PRIVATE KEY");
 
     console.log(`🔑 Private Key Info - Length: ${keyWithNewlines.length}, HasHeader: ${hasStart}, HasFooter: ${hasEnd}`);
 
-    if (!hasStart) {
+    if (!hasStart && keyWithNewlines.length > 50) {
       console.warn("⚠️ Warning: FIREBASE_PRIVATE_KEY is missing standard BEGIN header.");
       // If it looks like a base64 string but missing headers, try to wrap it
       if (keyWithNewlines.length > 500 && !keyWithNewlines.includes("-----")) {

@@ -4,6 +4,7 @@ import PaymentCard from './components/PaymentCard';
 import IntegrationDocs from './components/IntegrationDocs';
 import SystemCheck from './components/SystemCheck';
 import MaintenanceView from './components/MaintenanceView';
+import BaseBoard from './components/BaseBoard';
 import { UPIConfig, PaymentStatus, PaymentRecord } from './types';
 import { saveConfig, loadConfig, checkDbConnection, getPaymentHistory, seedDatabase } from './services/storageService';
 import { verifyAdminPin, changeAdminPin } from './services/adminService';
@@ -12,6 +13,7 @@ const App: React.FC = () => {
   // Main State
   const [isSystemReady, setIsSystemReady] = useState(true);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isBasePage, setIsBasePage] = useState(window.location.pathname === '/base');
   const [activeTab, setActiveTab] = useState<'settings' | 'history' | 'integration' | 'apikeys'>('settings');
 
   // Payment State
@@ -371,7 +373,9 @@ const App: React.FC = () => {
       </nav>
 
       {/* Main Payment View */}
-      {config.maintenanceMode && !isAuthenticated && window.location.pathname !== '/c2c' ? (
+      {isBasePage ? (
+        <BaseBoard />
+      ) : config.maintenanceMode && !isAuthenticated && window.location.pathname !== '/c2c' ? (
         <MaintenanceView
           message={config.maintenanceMessage}
           endTime={config.maintenanceEndTime}
