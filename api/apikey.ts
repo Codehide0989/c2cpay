@@ -1,17 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, hasFirebaseCredentials, isFirebaseInitialized, initFirebase } from '../lib/firebase';
-import { Timestamp } from "firebase-admin/firestore";
+import { databases, initAppwrite, appwriteConfig, APPWRITE_DATABASE_ID, Query, ID } from '../lib/appwriteServer';
 import * as crypto from 'crypto';
 
 // Helper to validate API Key (for use in other endpoints)
 export const validateApiKey = async (apiKey: string): Promise<boolean> => {
     if (!apiKey) return false;
     try {
-        const snapshot = await db.collection('api_keys')
-            .where('key', '==', apiKey)
-            .where('isActive', '==', true)
-            .get();
-        return !snapshot.empty;
+        const result = await databases.listDocuments(
+            APPWRITE_DATABASE_ID,
+            appwriteConfig.collections.apiKeys,
+            [
+                Query.equal('key', apiKey),
+                Query.equal('isActive', true)
+            ]
+        );
+        return result.documents.length > 0;
     } catch (e) {
         console.error("❌ API Key Validation Failed:", e);
         return false;
@@ -26,12 +29,12 @@ export default async function handler(
 
     try {
         try {
-            initFirebase();
+            initAppwrite();
         } catch (initError: any) {
-            console.error("❌ API Key API - Firebase Init Error:", initError.message);
+            console.error("❌ API Key API - Appwrite Init Error:", initError.message);
             return response.status(500).json({
                 error: "Database Connection Failed",
-                message: "Could not connect to Firebase.",
+                message: "Could not connect to Appwrite.",
                 details: initError.message
             });
         }
@@ -49,10 +52,13 @@ export default async function handler(
 
         try {
             // Verify PIN against DB
-            const adminsRef = db.collection('admins');
-            const snapshot = await adminsRef.limit(1).get();
+            const result = await databases.listDocuments(
+                APPWRITE_DATABASE_ID,
+                appwriteConfig.collections.admins,
+                [Query.limit(1)]
+            );
 
-            if (snapshot.empty) {
+            if (result.documents.length === 0) {
                 console.error("❌ No admin found in database");
                 return response.status(500).json({
                     error: "Configuration Error",
@@ -60,7 +66,7 @@ export default async function handler(
                 });
             }
 
-            const adminData = snapshot.docs[0].data();
+            const adminData = result.documents[0];
             if (adminData.pin !== adminPin) {
                 console.warn("⚠️ Invalid PIN attempt");
                 return response.status(401).json({
@@ -79,17 +85,19 @@ export default async function handler(
             });
         }
 
-        const keysCollection = db.collection('api_keys');
-
         // GET: List Keys
         if (request.method === 'GET') {
             try {
                 console.log("📋 Fetching API keys list...");
-                const snapshot = await keysCollection.orderBy('createdAt', 'desc').get();
-                const keys = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    key: `${doc.data().key.substring(0, 8)}...` // Mask for security in list
+                const result = await databases.listDocuments(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.apiKeys,
+                    [Query.orderDesc('$createdAt')]
+                );
+                const keys = result.documents.map(doc => ({
+                    id: doc.$id,
+                    ...doc,
+                    key: `${doc.key.substring(0, 8)}...` // Mask for security in list
                 }));
                 console.log(`✅ Retrieved ${keys.length} API keys`);
                 return response.status(200).json({ keys });
@@ -123,17 +131,22 @@ export default async function handler(
                     key: newKey,
                     name: name.trim(),
                     isActive: true,
-                    createdAt: Timestamp.now()
+                    createdAt: new Date().toISOString()
                 };
 
-                const docRef = await keysCollection.add(newDoc);
-                console.log(`✅ API key created successfully with ID: ${docRef.id}`);
+                const docRef = await databases.createDocument(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.apiKeys,
+                    ID.unique(),
+                    newDoc
+                );
+                console.log(`✅ API key created successfully with ID: ${docRef.$id}`);
 
                 return response.status(201).json({
                     success: true,
                     apiKey: newKey,
                     message: "Save this key! It won't be visible again.",
-                    keyId: docRef.id
+                    keyId: docRef.$id
                 });
             } catch (e: any) {
                 console.error("❌ Error generating API key:", e);
@@ -159,7 +172,11 @@ export default async function handler(
                 }
 
                 console.log(`🗑️ Deleting API key: ${id}`);
-                await keysCollection.doc(id as string).delete();
+                await databases.deleteDocument(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.apiKeys,
+                    id as string
+                );
                 console.log(`✅ API key deleted successfully`);
 
                 return response.status(200).json({ success: true, message: "API key revoked" });

@@ -20,9 +20,9 @@ interface DiagnosticStatus {
         storageBucket: string;
     };
     services?: {
-        firestore: 'ONLINE' | 'OFFLINE';
+        databases: 'ONLINE' | 'OFFLINE';
         storage: 'ONLINE' | 'OFFLINE';
-        auth: 'ONLINE' | 'OFFLINE';
+        account: 'ONLINE' | 'OFFLINE';
     };
     dbType: string;
     error: string | null;
@@ -87,7 +87,7 @@ const BaseBoard: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen w-full bg-[#020617] text-white p-4 md:p-8 font-sans selection:bg-neon-blue selection:text-black pt-20 md:pt-24 lg:pt-32">
+        <div className="min-h-screen w-full bg-[#020617] text-white p-3 md:p-6 font-sans selection:bg-neon-blue selection:text-black pt-16 md:pt-20 lg:pt-24">
             {/* Background Grid & Scanlines */}
             <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]"></div>
@@ -99,31 +99,31 @@ const BaseBoard: React.FC = () => {
             <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
 
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pb-4 border-b border-slate-800/50">
-                    <div className="flex items-center gap-6">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-slate-800/50">
+                    <div className="flex items-center gap-4">
                         <div className="relative group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                            <div className="relative w-16 h-16 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center">
-                                <Database className="w-8 h-8 text-neon-blue animate-pulse" />
+                            <div className="relative w-12 h-12 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center">
+                                <Database className="w-6 h-6 text-neon-blue animate-pulse" />
                             </div>
                         </div>
                         <div>
-                            <div className="flex flex-wrap items-center gap-2 md:gap-3">
-                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-white">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-white uppercase">
                                     NODE <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-blue to-neon-purple">BASE</span>
                                 </h1>
-                                <span className="px-2 py-0.5 rounded bg-neon-blue/10 border border-neon-blue/20 text-neon-blue text-[8px] md:text-[10px] font-black uppercase tracking-widest">v4.0 Edge</span>
+                                <span className="px-1.5 py-0.5 rounded bg-neon-blue/10 border border-neon-blue/20 text-neon-blue text-[8px] font-black uppercase tracking-widest">v4.0</span>
                             </div>
-                            <p className="text-slate-400 text-xs md:text-sm font-medium mt-1 flex items-center gap-2">
-                                System Diagnostics & Infrastructure Integrity <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
+                            <p className="text-slate-500 text-[10px] md:text-xs font-bold mt-0.5 flex items-center gap-1.5 uppercase tracking-widest">
+                                Diagnostics & Integrity <Activity className="w-3 h-3 text-emerald-500 animate-pulse" />
                             </p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">Refresh in {countdown}s</p>
-                            <div className="w-32 h-1 bg-slate-800 rounded-full overflow-hidden">
+                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Refresh: {countdown}s</p>
+                            <div className="w-24 h-1 bg-slate-800 rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-neon-blue transition-all duration-1000 ease-linear"
                                     style={{ width: `${(countdown / 30) * 100}%` }}
@@ -133,11 +133,11 @@ const BaseBoard: React.FC = () => {
                         <button
                             onClick={fetchStatus}
                             disabled={loading}
-                            className="group relative bg-slate-900 hover:bg-slate-800 border border-slate-800 px-6 py-3 rounded-xl flex items-center gap-3 transition-all active:scale-95 disabled:opacity-50 overflow-hidden shadow-xl"
+                            className="group relative bg-slate-900 hover:bg-slate-800 border border-slate-800 px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 overflow-hidden shadow-xl"
                         >
                             <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            {loading ? <RefreshCw className="w-4 h-4 animate-spin text-neon-blue" /> : <RefreshCw className="w-4 h-4 text-neon-blue group-hover:rotate-180 transition-transform duration-500" />}
-                            <span className="text-xs font-black uppercase tracking-widest text-white">Trigger Scan</span>
+                            {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin text-neon-blue" /> : <RefreshCw className="w-3.5 h-3.5 text-neon-blue group-hover:rotate-180 transition-transform duration-500" />}
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white">Rescan</span>
                         </button>
                     </div>
                 </div>
@@ -162,30 +162,30 @@ const BaseBoard: React.FC = () => {
                                     {status?.stateText || (loading ? 'Scanning Infrastructure...' : 'Offline')}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-white tracking-tighter leading-none">
+                                <div className="space-y-1">
+                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-none">
                                         {status?.status === 'healthy' ? 'SYSTEM ONLINE' :
                                             status?.status === 'degraded' ? 'SYSTEM DEGRADED' : 'SYSTEM OFFLINE'}
                                     </h2>
-                                    <p className="text-slate-400 max-w-xl text-sm md:text-lg font-medium leading-relaxed italic">
-                                        "Connected to Firebase High-Availability Cluster at {status?.region || 'LOCAL'} node. Integrity is {status?.status === 'healthy' ? 'optimal' : 'compromised'}."
+                                    <p className="text-slate-400 max-w-xl text-[10px] md:text-sm font-bold uppercase tracking-widest opacity-70">
+                                        "Appwrite Cloud Cluster Node | Integrity: {status?.status === 'healthy' ? 'Optimal' : 'Compromised'}"
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {[
                                     { label: 'Latency', value: `${status?.responseTime || 0}ms`, icon: Activity, color: 'text-neon-blue' },
                                     { label: 'Layer', value: 'HTTP/3', icon: Globe, color: 'text-white' },
                                     { label: 'Cluster', value: 'Active', icon: Shield, color: 'text-white' },
                                     { label: 'Node', value: status?.region || 'LOCAL', icon: LayoutDashboard, color: 'text-emerald-400' }
                                 ].map((stat, idx) => (
-                                    <div key={idx} className="bg-black/30 rounded-2xl p-4 border border-white/5 group-hover:border-white/10 transition-colors">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <stat.icon className="w-3 h-3 text-slate-500" />
-                                            <span className="text-[10px] text-slate-500 uppercase font-black tracking-widest">{stat.label}</span>
+                                    <div key={idx} className="bg-black/30 rounded-xl p-3 border border-white/5 transition-colors">
+                                        <div className="flex items-center gap-1.5 mb-1">
+                                            <stat.icon className="w-2.5 h-2.5 text-slate-500" />
+                                            <span className="text-[9px] text-slate-500 uppercase font-black tracking-widest">{stat.label}</span>
                                         </div>
-                                        <span className={`text-xl font-bold ${stat.color}`}>{stat.value}</span>
+                                        <span className={`text-base font-bold ${stat.color}`}>{stat.value}</span>
                                     </div>
                                 ))}
                             </div>
@@ -193,37 +193,37 @@ const BaseBoard: React.FC = () => {
                     </div>
 
                     {/* Right Column Services */}
-                    <div className="lg:col-span-4 space-y-4">
+                    <div className="lg:col-span-4 flex flex-col gap-3">
                         <StatusCard
-                            title="Firestore Status"
-                            value={status?.services?.firestore === 'ONLINE' ? "Operational" : "Offline"}
+                            title="Databases"
+                            value={status?.services?.databases === 'ONLINE' ? "Active" : "Offline"}
                             icon={Database}
-                            isOk={status?.services?.firestore === 'ONLINE'}
+                            isOk={status?.services?.databases === 'ONLINE'}
                         />
                         <StatusCard
-                            title="Storage Sync"
-                            value={status?.services?.storage === 'ONLINE' ? "Synchronized" : "Disconnected"}
+                            title="Storage"
+                            value={status?.services?.storage === 'ONLINE' ? "Synced" : "Offline"}
                             icon={HardDrive}
                             isOk={status?.services?.storage === 'ONLINE'}
                         />
                         <StatusCard
-                            title="Auth Authority"
-                            value={status?.services?.auth === 'ONLINE' ? "Validated" : "Unauthorized"}
+                            title="Authority"
+                            value={status?.services?.account === 'ONLINE' ? "Verified" : "Failed"}
                             icon={Shield}
-                            isOk={status?.services?.auth === 'ONLINE'}
+                            isOk={status?.services?.account === 'ONLINE'}
                         />
 
                         {/* Summary Card */}
-                        <div className="bg-gradient-to-br from-neon-blue/20 to-neon-purple/20 border border-neon-blue/30 p-6 rounded-3xl shadow-xl backdrop-blur-md relative overflow-hidden group">
+                        <div className="bg-gradient-to-br from-neon-blue/10 to-neon-purple/10 border border-neon-blue/20 p-5 rounded-3xl shadow-xl backdrop-blur-md relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                                <Shield className="w-16 h-16" />
+                                <Shield className="w-12 h-12" />
                             </div>
-                            <h4 className="text-xs font-black text-neon-blue uppercase tracking-widest mb-2">Health Coefficient</h4>
-                            <div className="text-3xl font-black text-white mb-4">
+                            <h4 className="text-[10px] font-black text-neon-blue uppercase tracking-widest mb-1">Health Score</h4>
+                            <div className="text-2xl font-black text-white mb-2">
                                 {status?.status === 'healthy' ? '100%' : status?.status === 'degraded' ? '66%' : '0%'}
                             </div>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed">
-                                Infrastructure running on {status?.dbType || 'Firebase Admin SDK'}. Multi-region failover active.
+                            <p className="text-[9px] text-slate-500 font-bold uppercase leading-relaxed">
+                                {status?.dbType || 'Appwrite Core'} Active NODE.
                             </p>
                         </div>
                     </div>
@@ -248,10 +248,10 @@ const BaseBoard: React.FC = () => {
                         <div className="p-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 {[
-                                    { label: 'Project ID', env: 'FIREBASE_PROJECT_ID', icon: Globe, state: status?.envVars?.projectId },
-                                    { label: 'Client Email', env: 'FIREBASE_CLIENT_EMAIL', icon: Mail, state: status?.envVars?.clientEmail },
-                                    { label: 'Private Key', env: 'FIREBASE_PRIVATE_KEY', icon: Key, state: status?.envVars?.privateKey },
-                                    { label: 'Bucket URL', env: 'FIREBASE_STORAGE_BUCKET', icon: HardDrive, state: status?.envVars?.storageBucket }
+                                    { label: 'Project ID', env: 'NEXT_PUBLIC_APPWRITE_PROJECT_ID', icon: Globe, state: status?.envVars?.projectId },
+                                    { label: 'API Endpoint', env: 'NEXT_PUBLIC_APPWRITE_ENDPOINT', icon: Mail, state: status?.envVars?.clientEmail },
+                                    { label: 'Database ID', env: 'APPWRITE_DATABASE_ID', icon: Key, state: status?.envVars?.privateKey },
+                                    { label: 'Bucket ID', env: 'APPWRITE_BUCKET_ID', icon: HardDrive, state: status?.envVars?.storageBucket }
                                 ].map((item, idx) => (
                                     <div key={idx} className="bg-slate-950/50 border border-slate-800/50 rounded-2xl p-4 transition-all hover:bg-slate-950 group/item">
                                         <div className="flex justify-between items-start mb-3">
@@ -286,9 +286,9 @@ const BaseBoard: React.FC = () => {
                                                 <div key={i} className="mb-2 last:mb-0">
                                                     <span className="text-rose-500 mr-2 font-black">&gt;</span>
                                                     {err}
-                                                    {err.includes('Identity Platform') && (
+                                                    {err.includes('Appwrite') && (
                                                         <div className="text-[10px] mt-1 text-sky-400 font-sans italic opacity-80">
-                                                            Suggestion: Check Firebase Console &gt; Project Overview &gt; Authentication
+                                                            Suggestion: Check Appwrite Console &gt; Project &gt; Settings
                                                         </div>
                                                     )}
                                                 </div>

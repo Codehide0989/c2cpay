@@ -1,7 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, isFirebaseInitialized, hasFirebaseCredentials, initFirebase } from '../lib/firebase';
+import { databases, initAppwrite, appwriteConfig, APPWRITE_DATABASE_ID, Query, ID } from '../lib/appwriteServer';
 import { validateApiKey } from './apikey';
-import { Timestamp } from "firebase-admin/firestore";
 
 export default async function handler(
     request: VercelRequest,
@@ -9,14 +8,13 @@ export default async function handler(
 ) {
     try {
         try {
-            initFirebase();
+            initAppwrite();
         } catch (initError: any) {
-            console.error("❌ Payment API - Firebase Init Error:", initError.message);
+            console.error("❌ Payment API - Appwrite Init Error:", initError.message);
             return response.status(500).json({ error: "Database Connection Failed", details: initError.message });
         }
 
         // API Key Validation (Enforced for POST, maybe optional for GET if checking history?)
-        // User said: "without api key integration not works". Usually integration = POST (create payment).
         if (request.method === 'POST') {
             const apiKey = request.headers['x-api-key'];
             if (!apiKey || typeof apiKey !== 'string') {
@@ -27,18 +25,19 @@ export default async function handler(
             }
         }
 
-        const paymentsRef = db.collection('payments');
-
         if (request.method === 'GET') {
-            // ... existing GET ...
             try {
                 // Return last 100 payments
-                const snapshot = await paymentsRef.orderBy('timestamp', 'desc').limit(100).get();
+                const result = await databases.listDocuments(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.payments,
+                    [Query.orderDesc('timestamp'), Query.limit(100)]
+                );
 
-                const history = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    timestamp: doc.data().timestamp?.toDate().toISOString()
+                const history = result.documents.map(doc => ({
+                    id: doc.$id,
+                    ...doc,
+                    timestamp: doc.timestamp
                 }));
 
                 return response.status(200).json(history);
@@ -52,16 +51,21 @@ export default async function handler(
             try {
                 const { id, amount, status, method, vpa, utr, details } = request.body;
 
-                await paymentsRef.add({
-                    transactionId: id,
-                    amount,
-                    status,
-                    method,
-                    vpa,
-                    utr,
-                    details,
-                    timestamp: Timestamp.now()
-                });
+                await databases.createDocument(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.payments,
+                    ID.unique(),
+                    {
+                        transactionId: id,
+                        amount,
+                        status,
+                        method,
+                        vpa,
+                        utr,
+                        details,
+                        timestamp: new Date().toISOString()
+                    }
+                );
 
                 return response.status(200).json({ success: true });
             } catch (error) {

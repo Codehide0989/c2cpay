@@ -49,12 +49,11 @@ async function startServer() {
     console.log("   Local API Server Startup Debug Info");
     console.log("-----------------------------------------");
     console.log(`> Loading environment variables...`);
-    // Note: VITE_FIREBASE_API_KEY might be in process.env if loaded correctly
-    console.log(`> FIREBASE_CONFIG found: ${!!process.env.VITE_FIREBASE_API_KEY}`);
-    if (process.env.VITE_FIREBASE_API_KEY) {
-        console.log(`> FIREBASE_PROJECT_ID: ${process.env.VITE_FIREBASE_PROJECT_ID}`);
+    console.log(`> APPWRITE_ENDPOINT found: ${!!process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}`);
+    if (process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT) {
+        console.log(`> APPWRITE_PROJECT_ID: ${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`);
     } else {
-        console.warn("⚠️ WARNING: FIREBASE_API_KEY is missing! DB connections will fail.");
+        console.warn("⚠️ WARNING: APPWRITE config is missing! DB connections will fail.");
     }
     console.log("-----------------------------------------");
 

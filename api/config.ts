@@ -1,74 +1,91 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, isFirebaseInitialized, hasFirebaseCredentials, initFirebase } from '../lib/firebase';
-import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { databases, initAppwrite, appwriteConfig, APPWRITE_DATABASE_ID, Query, ID } from '../lib/appwriteServer';
 
 export default async function handler(
     request: VercelRequest,
     response: VercelResponse
 ) {
     try {
-        initFirebase();
+        initAppwrite();
     } catch (initError: any) {
         return response.status(500).json({
-            error: "Backend Error: Firebase Admin SDK not initialized",
-            message: "Firebase credentials are present but initialization failed.",
+            error: "Backend Error: Appwrite not initialized",
+            message: "Appwrite connection failed.",
             details: initError.message
         });
     }
 
     try {
-        const configsRef = db.collection('configs');
-
         if (request.method === 'GET') {
-            const snapshot = await configsRef.orderBy('updatedAt', 'desc').limit(1).get();
+            const result = await databases.listDocuments(
+                APPWRITE_DATABASE_ID,
+                appwriteConfig.collections.configs,
+                [Query.orderDesc('updatedAt'), Query.limit(1)]
+            );
 
-            if (!snapshot.empty) {
-                const docData = snapshot.docs[0].data();
-                return response.status(200).json({ id: snapshot.docs[0].id, ...docData });
+            if (result.documents.length > 0) {
+                const docData = result.documents[0];
+                return response.status(200).json({ id: docData.$id, ...docData });
             }
             return response.status(200).json({});
         }
 
         if (request.method === 'POST') {
-            const { pa, pn, tn, am, title, amountLocked, redirectUrl, maintenanceMode, maintenanceMessage } = request.body;
+            const { pa, pn, tn, am, title, amountLocked, redirectUrl, maintenanceMode, maintenanceMessage, maintenanceEndTime } = request.body;
 
-            console.log('📝 Saving config:', { pa, pn, tn, am, title, amountLocked, redirectUrl, maintenanceMode, maintenanceMessage });
+            console.log('📝 Saving config:', { pa, pn, tn, am, title, amountLocked, redirectUrl, maintenanceMode, maintenanceMessage, maintenanceEndTime });
 
             // Check for existing config to update
-            const snapshot = await configsRef.orderBy('updatedAt', 'desc').limit(1).get();
+            const result = await databases.listDocuments(
+                APPWRITE_DATABASE_ID,
+                appwriteConfig.collections.configs,
+                [Query.orderDesc('updatedAt'), Query.limit(1)]
+            );
 
-            // Build Firestore data object, filtering out undefined values
-            // Firestore doesn't accept undefined, so we provide defaults or omit the field
-            const firestoreData: any = {
+            // Build data object
+            const dataToSave: any = {
                 pa: pa || 'shopc2c@upi',
                 pn: pn || 'ShopC2C Store',
                 tn: tn || 'Order Payment',
                 am: am || '0',
                 title: title || 'Secure Payment',
-                amountLocked: amountLocked === true, // Ensure boolean, default to false
-                maintenanceMode: maintenanceMode === true, // Ensure boolean, default to false
-                maintenanceMessage: maintenanceMessage || '', // Default to empty string
-                updatedAt: Timestamp.now()
+                amountLocked: amountLocked === true,
+                maintenanceMode: maintenanceMode === true,
+                maintenanceMessage: maintenanceMessage || '',
+                updatedAt: new Date().toISOString()
             };
 
-            // Only add redirectUrl if it's defined and not empty
-            if (redirectUrl && redirectUrl.trim() !== '') {
-                firestoreData.redirectUrl = redirectUrl;
+            if (maintenanceEndTime !== undefined) {
+                dataToSave.maintenanceEndTime = maintenanceEndTime;
             }
 
-            console.log('✅ Firestore data prepared:', firestoreData);
+            if (redirectUrl && redirectUrl.trim() !== '') {
+                dataToSave.redirectUrl = redirectUrl;
+            }
 
-            if (!snapshot.empty) {
+            console.log('✅ Appwrite data prepared:', dataToSave);
+
+            if (result.documents.length > 0) {
                 // Update existing
-                const docId = snapshot.docs[0].id;
-                await configsRef.doc(docId).update(firestoreData);
+                const docId = result.documents[0].$id;
+                await databases.updateDocument(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.configs,
+                    docId,
+                    dataToSave
+                );
                 console.log('✅ Config updated successfully');
-                return response.status(200).json({ id: docId, ...firestoreData });
+                return response.status(200).json({ id: docId, ...dataToSave });
             } else {
                 // Create new
-                const docRef = await configsRef.add(firestoreData);
+                const docRef = await databases.createDocument(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.configs,
+                    ID.unique(),
+                    dataToSave
+                );
                 console.log('✅ Config created successfully');
-                return response.status(200).json({ id: docRef.id, ...firestoreData });
+                return response.status(200).json({ id: docRef.$id, ...dataToSave });
             }
         }
 
@@ -76,15 +93,6 @@ export default async function handler(
 
     } catch (error: any) {
         console.error("Critical Error in /api/config:", error);
-
-        // Check if error is related to Firebase initialization
-        if (error.message && error.message.includes("not initialized")) {
-            return response.status(500).json({
-                error: "Backend Error: Firebase Admin Credentials missing in environment",
-                message: error.message,
-                details: "Please configure FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY in your .env.local file or Vercel environment variables."
-            });
-        }
 
         return response.status(500).json({
             error: "Internal Server Error",

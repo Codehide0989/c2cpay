@@ -745,7 +745,7 @@ const App: React.FC = () => {
                               className="w-full bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs font-bold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2"
                             >
                               <Database className="w-3.5 h-3.5" />
-                              {isLoading ? 'Processing...' : 'Export Collections to Firebase Storage'}
+                              {isLoading ? 'Processing...' : 'Export Snapshot to Appwrite Storage'}
                             </button>
                           </div>
                         </div>
@@ -946,8 +946,8 @@ const App: React.FC = () => {
                       <div className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-rose-950 border border-rose-500 rounded-lg shadow-xl text-[10px] text-rose-200 z-50 hidden group-hover:block">
                         <p className="font-bold border-b border-rose-500/30 pb-1 mb-1">Connection Diagnosis</p>
                         1. Check Internet<br />
-                        2. Check DATABASE_URL in Vercel<br />
-                        3. Check IP Whitelist (Neon Console)
+                        2. Check APPWRITE_PROJECT_ID in Vercel<br />
+                        3. Check Appwrite Console Status
                       </div>
                     )}
                   </div>
@@ -965,14 +965,14 @@ const App: React.FC = () => {
                       } else {
                         setDbStatus('error');
                         let msg = "❌ Connection Failed:\n";
-                        if (!data.envVarSet) msg += "- DATABASE_URL not found in env.\n";
+                        if (!data.envVarSet) msg += "- Appwrite environment variables not found.\n";
                         if (data.error) msg += `- Error: ${data.error}\n`;
                         msg += `\nState: ${data.stateText || 'Unknown'}`;
                         alert(msg);
                       }
                     } catch (e: any) {
                       setDbStatus('error');
-                      alert(`❌ Connection Error: Could not reach API.\n\nPossible Fixes:\n1. Check if 'DATABASE_URL' is set in Vercel Settings.\n2. Ensure the backend is deployed (check Vercel logs).\n3. If running locally, ensure 'npm run dev' is active.\n\nError: ${e.message}`);
+                      alert(`❌ Connection Error: Could not reach API.\n\nPossible Fixes:\n1. Check if 'APPWRITE_PROJECT_ID' is set in Vercel Settings.\n2. Ensure the backend is deployed (check Vercel logs).\n3. If running locally, ensure 'npm run dev' is active.\n\nError: ${e.message}`);
                     }
                   }} className="bg-white/5 hover:bg-white/10 p-1.5 rounded transition-colors" title="Retry Connection">
                     <RefreshCw className={`w-3 h-3 ${dbStatus === 'connecting' ? 'animate-spin' : ''}`} />

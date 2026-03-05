@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db, isFirebaseInitialized, hasFirebaseCredentials, initFirebase } from '../lib/firebase';
-import { Timestamp } from "firebase-admin/firestore";
+import { databases, initAppwrite, hasAppwriteCredentials, appwriteConfig, APPWRITE_DATABASE_ID, Query, ID } from '../lib/appwriteServer';
 
 export default async function handler(
     request: VercelRequest,
@@ -11,30 +10,27 @@ export default async function handler(
 
     try {
         // 1. Explicitly check for credentials first (fast fail)
-        if (!hasFirebaseCredentials()) {
-            console.error(`❌ [Admin API ${requestId}] Missing Firebase credentials in Environment`);
+        if (!hasAppwriteCredentials()) {
+            console.error(`❌ [Admin API ${requestId}] Missing Appwrite credentials in Environment`);
             return response.status(500).json({
                 error: "Environment Configuration Error",
-                message: "Firebase credentials (Project ID, Client Email, or Private Key) are missing in Vercel environment variables.",
+                message: "Appwrite credentials are missing in Vercel environment variables.",
                 requestId
             });
         }
 
-        // 2. Initialize Firebase
+        // 2. Initialize Appwrite
         try {
-            initFirebase();
+            initAppwrite();
         } catch (initError: any) {
-            console.error(`❌ [Admin API ${requestId}] Firebase Admin Init Error:`, initError.message);
+            console.error(`❌ [Admin API ${requestId}] Appwrite Server Init Error:`, initError.message);
             return response.status(500).json({
                 error: "Database Connection Error",
-                message: "Failed to initialize database connection. Check if your Private Key is correct.",
+                message: "Failed to initialize database connection.",
                 details: initError.message,
                 requestId
             });
         }
-
-        // Use the connection
-        const adminsRef = db.collection('admins');
 
         // Verify PIN
         if (request.method === 'POST') {
@@ -58,22 +54,30 @@ export default async function handler(
 
             try {
                 // Fetch first admin document
-                const snapshot = await adminsRef.limit(1).get()
-                    .catch(e => {
-                        console.error(`❌ [Admin API ${requestId}] Firestore Get Failed:`, e.message);
-                        throw new Error(`Firestore Access Failed: ${e.message}. Ensure Firestore is enabled in your project.`);
-                    });
+                const result = await databases.listDocuments(
+                    APPWRITE_DATABASE_ID,
+                    appwriteConfig.collections.admins,
+                    [Query.limit(1)]
+                ).catch((e: any) => {
+                    console.error(`❌ [Admin API ${requestId}] Appwrite Get Failed:`, e.message);
+                    throw new Error(`Database Access Failed: ${e.message}. Ensure Database is enabled in your project.`);
+                });
 
-                let adminDoc = snapshot.empty ? null : snapshot.docs[0];
-                let adminData = adminDoc ? adminDoc.data() : null;
+                let adminDoc = result.documents.length > 0 ? result.documents[0] : null;
+                let adminData = adminDoc ? adminDoc : null;
 
                 // SETUP Mode
                 if (action === 'setup') {
                     if (!adminDoc) {
-                        await adminsRef.add({
-                            pin: pin || '1234',
-                            updated_at: Timestamp.now()
-                        });
+                        await databases.createDocument(
+                            APPWRITE_DATABASE_ID,
+                            appwriteConfig.collections.admins,
+                            ID.unique(),
+                            {
+                                pin: pin || '1234',
+                                updated_at: new Date().toISOString()
+                            }
+                        );
                         return response.status(200).json({
                             success: true,
                             message: "Admin configured successfully.",
@@ -111,10 +115,15 @@ export default async function handler(
                         });
                     }
 
-                    await adminsRef.doc(adminDoc.id).update({
-                        pin: newPin,
-                        updated_at: Timestamp.now()
-                    });
+                    await databases.updateDocument(
+                        APPWRITE_DATABASE_ID,
+                        appwriteConfig.collections.admins,
+                        adminDoc.$id,
+                        {
+                            pin: newPin,
+                            updated_at: new Date().toISOString()
+                        }
+                    );
 
                     return response.status(200).json({
                         success: true,
@@ -127,11 +136,16 @@ export default async function handler(
                 if (!adminDoc) {
                     try {
                         console.log(`⚠️ [Admin API ${requestId}] No admin found. Seeding default '1234'...`);
-                        await adminsRef.add({
-                            pin: '1234',
-                            updated_at: Timestamp.now()
-                        });
-                        adminData = { pin: '1234' };
+                        await databases.createDocument(
+                            APPWRITE_DATABASE_ID,
+                            appwriteConfig.collections.admins,
+                            ID.unique(),
+                            {
+                                pin: '1234',
+                                updated_at: new Date().toISOString()
+                            }
+                        );
+                        adminData = { pin: '1234' } as any;
                     } catch (seedError: any) {
                         return response.status(500).json({
                             error: "Database Write Failed (Seeding)",
@@ -158,7 +172,7 @@ export default async function handler(
 
                 return response.status(500).json({
                     error: 'Database Operation Error',
-                    message: "The server encountered an error while communicating with Firestore.",
+                    message: "The server encountered an error while communicating with Appwrite.",
                     details: error.message,
                     requestId
                 });

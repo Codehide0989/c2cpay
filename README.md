@@ -44,28 +44,13 @@ ShopC2C is a production-ready, frontend-first UPI payment gateway designed for s
     # Required for AI Receipt Verification
     GEMINI_API_KEY=your_google_gemini_api_key_here
     
-    # Firebase Admin SDK (Server-side - REQUIRED for API routes)
-    # Get these from Firebase Console → Project Settings → Service Accounts → Generate New Private Key
-    FIREBASE_PROJECT_ID=your_project_id
-    FIREBASE_CLIENT_EMAIL=your_service_account_email@your-project.iam.gserviceaccount.com
-    FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYour\nPrivate\nKey\nHere\n-----END PRIVATE KEY-----\n"
-    FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-    
-    # Firebase Client SDK (Frontend - optional, if using client-side Firebase)
-    VITE_FIREBASE_API_KEY=your_api_key
-    VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-    VITE_FIREBASE_PROJECT_ID=your_project_id
-    VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-    VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-    VITE_FIREBASE_APP_ID=your_app_id
+    # Appwrite Configuration
+    NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+    NEXT_PUBLIC_APPWRITE_PROJECT_ID=your_project_id_here
+    APPWRITE_DATABASE_ID=your_database_id_here
+    APPWRITE_BUCKET_ID=your_bucket_id_here
+    APPWRITE_API_KEY=your_appwrite_api_key_here
     ```
-
-    **Important Notes:**
-    - For **server-side** (API routes): Use `FIREBASE_*` variables (without `VITE_` prefix) - **REQUIRED**
-    - For **client-side** (React app): Use `VITE_FIREBASE_*` variables (optional)
-    - The `FIREBASE_PRIVATE_KEY` should include the full key with newlines (use `\n` in the .env file)
-    - Get your service account credentials from [Firebase Console](https://console.firebase.google.com/) → Project Settings → Service Accounts
-    - **If you see "Firebase Admin Credentials missing" error**, check that all three `FIREBASE_*` variables are set correctly
 
 4.  **Run Development Server**
     Start both frontend and backend servers with a single command:
@@ -132,31 +117,28 @@ This project is optimized for Vercel deployment. It uses a **Hybrid** structure:
 
 4.  **Environment Variables (CRITICAL)**:
     -   Go to **Environment Variables** section in Vercel Dashboard.
-    -   **For Serverless Functions (API routes) - REQUIRED:**
-        -   `FIREBASE_PROJECT_ID` - Your Firebase project ID
-        -   `FIREBASE_CLIENT_EMAIL` - Service account email (ends with @...iam.gserviceaccount.com)
-        -   `FIREBASE_PRIVATE_KEY` - Service account private key (paste the full key including `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`)
-        -   `FIREBASE_STORAGE_BUCKET` - Your storage bucket (optional, has default)
-    -   **For Client-side (Frontend) - Optional:**
-        -   Add all `VITE_FIREBASE_*` variables if you need client-side Firebase features
+    -   **Configuring Appwrite Backend Parameters:**
+        -   `NEXT_PUBLIC_APPWRITE_ENDPOINT`
+        -   `NEXT_PUBLIC_APPWRITE_PROJECT_ID`
+        -   `APPWRITE_DATABASE_ID`
+        -   `APPWRITE_BUCKET_ID`
+        -   `APPWRITE_API_KEY`
     -   **Other:**
         -   `GEMINI_API_KEY` - If using AI features
     
-    **⚠️ CRITICAL:** The `FIREBASE_PRIVATE_KEY` must be pasted exactly as it appears in your Firebase service account JSON file. In Vercel, you can paste it with actual newlines or use `\n` characters. The system will handle both formats automatically.
-
 5.  **Deploy**:
     -   Click **Deploy**.
     -   Once deployed, the backend API is available at `/api/*` automatically.
     -   Once deployed, visit `/api/status` (e.g., `https://your-app.vercel.app/api/status`) to confirm the backend is running.
 
 ## Security Notes
-*   **Database**: This project uses Firebase Firestore. Ensure your Security Rules are configured correctly.
-*   **API Keys**: Your Firebase API Key is safe to expose in the frontend, but keep `GEMINI_API_KEY` secure (backend only).
+*   **Database**: This project uses Appwrite. Ensure your Security Rules are configured correctly.
+*   **API Keys**: Keep `GEMINI_API_KEY` and `APPWRITE_API_KEY` secure (backend only).
 
 ## Tech Stack
 
 *   **Frontend**: React 19, TypeScript, Tailwind CSS
-*   **Backend**: Firebase (Firestore, Auth, Storage) + Vercel Serverless
+*   **Backend**: Appwrite (Database, Auth, Storage) + Vercel Serverless
 *   **AI**: Google GenAI SDK (Gemini 2.5 Flash)
 *   **Icons**: Lucide React
 *   **Styling**: Glassmorphism, 3D CSS Transforms
@@ -188,46 +170,29 @@ If you see "API Gateway Unreachable" or "Connection Failed":
    ```
 2. Verify:
    - Check terminal for `✅ Local API Server running`.
-   - Check `.env.local` for correct Firebase credentials.
+   - Check `.env.local` for correct Appwrite credentials.
 3. **Database Issues**:
    - Ensure a document exists in `configs` collection (or let the app create it).
 
-### Firebase Database Connection Issues on Vercel
+### Appwrite Database Connection Issues on Vercel
 
 If your database connection fails after deploying to Vercel:
 
 1. **Check Environment Variables:**
    - Go to Vercel Dashboard → Your Project → Settings → Environment Variables
-   - Verify these variables are set (without `VITE_` prefix):
-     - `FIREBASE_PROJECT_ID`
-     - `FIREBASE_CLIENT_EMAIL`
-     - `FIREBASE_PRIVATE_KEY`
-   - **Important:** The `FIREBASE_PRIVATE_KEY` must be the full key from your Firebase service account JSON file
+   - Verify Appwrite variables are set.
 
 2. **Test Connection:**
    - Visit `https://your-app.vercel.app/api/status` to check connection status
-   - Visit `https://your-app.vercel.app/api/test_db` for detailed connection test
    - Visit `https://your-app.vercel.app/api/diagnose` for comprehensive diagnostics
 
 3. **Common Issues:**
-   - **"Missing credentials" error:** Make sure you added `FIREBASE_*` variables (not just `VITE_FIREBASE_*`)
-   - **"Invalid private key" error:** The private key must include the full key with `-----BEGIN PRIVATE KEY-----` and `-----END PRIVATE KEY-----`
-   - **"Permission denied" error:** Check Firebase Security Rules and ensure your service account has proper permissions
+   - **"Missing credentials" error:** Make sure you added APPWRITE variables
+   - **"Permission denied" error:** Check Appwrite Security Rules and ensure proper permissions
 
-4. **Get Firebase Service Account Credentials:**
-   - Go to [Firebase Console](https://console.firebase.google.com/)
-   - Select your project → Project Settings → Service Accounts
-   - Click "Generate New Private Key"
-   - Download the JSON file
-   - Extract values:
-     - `project_id` → `FIREBASE_PROJECT_ID`
-     - `client_email` → `FIREBASE_CLIENT_EMAIL`
-     - `private_key` → `FIREBASE_PRIVATE_KEY`
-
-5. **Redeploy After Changes:**
+4. **Redeploy After Changes:**
    - After adding/updating environment variables in Vercel, you must redeploy
    - Go to Deployments → Click "..." → Redeploy
-   - Or push a new commit to trigger automatic deployment
 
 ## License
 
