@@ -1,20 +1,20 @@
 import { Client, Account, Databases, Storage } from "appwrite";
 
-const getEnvParam = (key: string): string => {
-  // Check Next.js / Vite style vars
-  if (typeof process !== "undefined" && process.env) {
-    if (process.env[key]) return process.env[key] as string;
+const getEnvVar = (key: string, viteVar: string | undefined, fallback: string = ""): string => {
+  // Check Node.js process.env first (for server-side / Next.js)
+  if (typeof process !== "undefined" && process.env && process.env[key]) {
+    return process.env[key] as string;
   }
-  // Check Vite import.meta.env
-  if (typeof import.meta !== "undefined" && (import.meta as any).env) {
-    if ((import.meta as any).env[key]) return (import.meta as any).env[key] as string;
+  // Then check statically provided Vite variable
+  if (viteVar) {
+    return viteVar;
   }
-  return "";
+  return fallback;
 };
 
-// Hardcoded Appwrite project details (as requested)
-const APPWRITE_ENDPOINT = "https://sgp.cloud.appwrite.io/v1";
-const APPWRITE_PROJECT_ID = "69a92c1c002de9822de7";
+// Hardcoded Appwrite project details (as requested), but allow overrides
+const APPWRITE_ENDPOINT = getEnvVar("APPWRITE_ENDPOINT", typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_APPWRITE_ENDPOINT : undefined, "https://cloud.appwrite.io/v1");
+const APPWRITE_PROJECT_ID = getEnvVar("APPWRITE_PROJECT_ID", typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_APPWRITE_PROJECT_ID : undefined, "69a92c1c002de9822de7");
 
 export const client = new Client().setEndpoint(APPWRITE_ENDPOINT).setProject(APPWRITE_PROJECT_ID);
 
@@ -25,8 +25,8 @@ export const storage = new Storage(client);
 export const appwriteConfig = {
   endpoint: APPWRITE_ENDPOINT,
   projectId: APPWRITE_PROJECT_ID,
-  databaseId: getEnvParam("APPWRITE_DATABASE_ID") || "YOUR_DATABASE_ID",
-  bucketId: getEnvParam("APPWRITE_BUCKET_ID") || "YOUR_BUCKET_ID",
+  databaseId: getEnvVar("APPWRITE_DATABASE_ID", typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_APPWRITE_DATABASE_ID : undefined, "YOUR_DATABASE_ID"),
+  bucketId: getEnvVar("APPWRITE_BUCKET_ID", typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_APPWRITE_BUCKET_ID : undefined, "YOUR_BUCKET_ID"),
   collections: {
     users: "users",
     posts: "posts",
