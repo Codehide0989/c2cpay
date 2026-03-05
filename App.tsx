@@ -69,7 +69,11 @@ const App: React.FC = () => {
       const savedConfig = await loadConfig();
       let effectiveConfig = savedConfig || config;
 
-      // 3. Override with URL Params if present (Dynamic Integration)
+      // 3. Secret Admin Entry & Override with URL Params
+      if (window.location.pathname === '/c2c') {
+        setIsAdminOpen(true);
+      }
+
       const params = new URLSearchParams(window.location.search);
       if (params.has('pa')) {
         effectiveConfig = {
@@ -347,14 +351,14 @@ const App: React.FC = () => {
           <span className="text-lg font-bold tracking-tight text-white">ShopC2C</span>
         </div>
         <div className="flex items-center gap-4">
-          {dbStatus === 'connected' && (isAdminOpen || new URLSearchParams(window.location.search).get('admin') === 'true') && (
-            <div className="hidden md:flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+          {dbStatus === 'connected' && (isAdminOpen || window.location.pathname === '/c2c') && (
+            <div className="hidden md:flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shadow-[0_0_10px_rgba(52,211,153,0.1)] animate-pulse">
               <Database className="w-3 h-3" />
               <span>Connected</span>
             </div>
           )}
 
-          {(isAdminOpen || new URLSearchParams(window.location.search).get('admin') === 'true') && (
+          {(isAdminOpen || window.location.pathname === '/c2c') && (
             <button
               onClick={() => setIsAdminOpen(true)}
               className="group flex items-center gap-2 text-slate-400 hover:text-white transition-all bg-black/20 hover:bg-white/10 backdrop-blur-md border border-white/5 hover:border-white/20 p-2 md:px-4 rounded-full"
@@ -367,7 +371,7 @@ const App: React.FC = () => {
       </nav>
 
       {/* Main Payment View */}
-      {config.maintenanceMode && !isAuthenticated && new URLSearchParams(window.location.search).get('admin') !== 'true' ? (
+      {config.maintenanceMode && !isAuthenticated && window.location.pathname !== '/c2c' ? (
         <MaintenanceView
           message={config.maintenanceMessage}
           endTime={config.maintenanceEndTime}
@@ -431,8 +435,13 @@ const App: React.FC = () => {
               {!isAuthenticated ? (
                 // Login Screen
                 <div className="h-full flex flex-col items-center justify-center py-8 space-y-6">
-                  <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center shadow-inner">
-                    <User className="w-8 h-8 text-slate-400" />
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center shadow-inner border border-white/5">
+                      <User className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-neon-blue rounded-full p-1.5 border-4 border-[#0f172a] animate-pulse">
+                      <Shield className="w-3 h-3 text-black" />
+                    </div>
                   </div>
 
                   <div className="w-full max-w-xs space-y-4">
@@ -852,9 +861,21 @@ const App: React.FC = () => {
                                 <div className="font-bold text-white text-sm">{key.name}</div>
                                 <div className="font-mono text-xs text-slate-500 mt-1">{key.key}</div>
                               </div>
-                              <button onClick={() => handleDeleteKey(key.id)} className="text-rose-400 hover:text-rose-300 p-2 hover:bg-rose-500/10 rounded-lg transition-colors">
-                                <LogOut className="w-4 h-4 rotate-180" />
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(key.key);
+                                    alert("Key copied to clipboard!");
+                                  }}
+                                  className="text-slate-400 hover:text-white p-2 hover:bg-white/5 rounded-lg transition-colors"
+                                  title="Copy Key"
+                                >
+                                  <Share2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDeleteKey(key.id)} className="text-rose-400 hover:text-rose-300 p-2 hover:bg-rose-500/10 rounded-lg transition-colors" title="Revoke Key">
+                                  <LogOut className="w-4 h-4 rotate-180" />
+                                </button>
+                              </div>
                             </div>
                           ))}
                           {apiKeys.length === 0 && !newApiKey && (

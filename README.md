@@ -167,7 +167,7 @@ Access the Admin Dashboard to configure UPI settings and view transaction histor
 
 1. **Open Admin Panel**: 
    - Click the "Admin" button in the top navigation bar.
-   - Or append `?admin=true` to the URL.
+   - Or visit the secret path `/c2c` (e.g., `your-domain.com/c2c`).
 
 2. **Default Credentials**:
    - **PIN**: `1234`
