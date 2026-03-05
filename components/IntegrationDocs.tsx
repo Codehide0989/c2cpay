@@ -1,5 +1,5 @@
 import React from 'react';
-import { Copy, Code, Globe, Check } from 'lucide-react';
+import { Copy, Code, Globe, Check, Zap } from 'lucide-react';
 
 interface IntegrationDocsProps {
   baseUrl: string;
@@ -16,104 +16,104 @@ const IntegrationDocs: React.FC<IntegrationDocsProps> = ({ baseUrl, exampleLink 
   };
 
   const htmlCode = `
-<!-- ShopC2C Payment Button -->
+<!-- ShopC2C Atomic Payment Button -->
 <a href="${exampleLink}" 
    target="_blank" 
-   style="background: #00f3ff; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-family: sans-serif;">
-   Pay Now with UPI
+   style="background: linear-gradient(to right, #00f3ff, #d946ef); color: #000; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: 900; font-family: 'Outfit', sans-serif; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);">
+   SECURE UPI PAY
 </a>`.trim();
 
   const apiCurl = `
-curl -X POST ${baseUrl}api/payment \\
+# Backend Verification API
+curl -X POST ${baseUrl}api/verify \\
   -H "Content-Type: application/json" \\
-  -H "x-api-key: YOUR_API_KEY_HERE" \\
   -d '{
-    "amount": "100",
-    "vpa": "customer@upi",
-    "details": "Order #123"
+    "imageBase64": "IMAGE_DATA_HERE",
+    "expectedAmount": "100",
+    "expectedVpa": "merchant@upi"
   }'`.trim();
 
   return (
-    <div className="space-y-6 text-slate-300">
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-        <h4 className="flex items-center gap-2 text-blue-400 font-bold mb-2">
-          <Globe className="w-4 h-4" />
-          Quick Integration
+    <div className="space-y-8 text-slate-400">
+      <div className="bg-neon-blue/5 border border-neon-blue/20 rounded-2xl p-6 backdrop-blur-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          <Globe className="w-16 h-16 text-neon-blue" />
+        </div>
+        <h4 className="flex items-center gap-3 text-neon-blue font-black uppercase tracking-[0.2em] text-sm mb-3">
+          <Globe className="w-5 h-5" />
+          Neural Link Integration
         </h4>
-        <p className="text-sm text-slate-400">
-          You can integrate ShopC2C into any website by simply linking to this page with specific URL parameters.
-          For backend integration, generate an API Key.
+        <p className="text-sm leading-relaxed max-w-md">
+          Integrate ShopC2C into any decentralized or legacy platform using atomic URL parameters or our high-performance verification API.
         </p>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">API Endpoint / Base URL</label>
-        <div className="flex items-center gap-2 bg-black/40 p-3 rounded-lg border border-white/10 font-mono text-sm text-neon-blue">
-          <span className="truncate">{baseUrl}</span>
-          <button onClick={() => copyToClipboard(baseUrl, 'url')} className="ml-auto hover:text-white">
-            {copied === 'url' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+      <div className="space-y-3">
+        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">Universal Base Endpoint</label>
+        <div className="flex items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-white/5 font-mono text-sm text-white group relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <span className="truncate flex-1 font-bold">{baseUrl}</span>
+          <button
+            onClick={() => copyToClipboard(baseUrl, 'url')}
+            className="p-2 bg-white/5 hover:bg-neon-blue hover:text-black rounded-lg transition-all"
+          >
+            {copied === 'url' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      {/* API Key Header Info */}
-      <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-        <label className="text-xs font-bold uppercase tracking-wider text-neon-purple flex items-center gap-2 mb-2">
-          <Code className="w-3 h-3" /> API Integration (Backend)
-        </label>
-        <p className="text-xs text-slate-400 mb-2">
-          Include your API Key in the header <code>x-api-key</code> for all POST requests.
-        </p>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple flex items-center gap-2">
+            <Code className="w-3.5 h-3.5" /> Core API Protocol
+          </label>
+          <span className="text-[9px] font-mono text-slate-600">v4.0.0-PROTOTYPE</span>
+        </div>
         <div className="relative group">
-          <pre className="bg-black/50 p-3 rounded border border-white/5 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur"></div>
+          <pre className="relative bg-black/60 p-5 rounded-2xl border border-white/5 text-[11px] font-mono text-indigo-300 overflow-x-auto custom-scrollbar">
             {apiCurl}
           </pre>
-          <button onClick={() => copyToClipboard(apiCurl, 'curl')} className="absolute top-2 right-2 text-slate-500 hover:text-white">
-            {copied === 'curl' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+          <button
+            onClick={() => copyToClipboard(apiCurl, 'curl')}
+            className="absolute top-4 right-4 p-2 bg-white/5 hover:bg-neon-purple hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+          >
+            {copied === 'curl' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-500">URL Parameters (Frontend)</label>
-        <div className="grid gap-2 text-sm">
-          <div className="grid grid-cols-12 items-center bg-white/5 p-2 rounded border border-white/5">
-            <span className="col-span-3 text-neon-purple font-mono">pa</span>
-            <span className="col-span-9 text-slate-400">Merchant UPI ID (e.g. merchant@upi)</span>
-          </div>
-          <div className="grid grid-cols-12 items-center bg-white/5 p-2 rounded border border-white/5">
-            <span className="col-span-3 text-neon-purple font-mono">pn</span>
-            <span className="col-span-9 text-slate-400">Merchant Name (displayed on receipt)</span>
-          </div>
-          <div className="grid grid-cols-12 items-center bg-white/5 p-2 rounded border border-white/5">
-            <span className="col-span-3 text-neon-purple font-mono">am</span>
-            <span className="col-span-9 text-slate-400">Amount (optional, locks amount if 'locked=true')</span>
-          </div>
-          <div className="grid grid-cols-12 items-center bg-white/5 p-2 rounded border border-white/5">
-            <span className="col-span-3 text-neon-purple font-mono">tn</span>
-            <span className="col-span-9 text-slate-400">Transaction Note (e.g. Order #123)</span>
-          </div>
-          <div className="grid grid-cols-12 items-center bg-white/5 p-2 rounded border border-white/5">
-            <span className="col-span-3 text-neon-purple font-mono">redirect_url</span>
-            <span className="col-span-9 text-slate-400">URL to redirect to after successful payment</span>
-          </div>
+      <div className="space-y-4">
+        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1">Atomic Param Map</label>
+        <div className="grid gap-3 font-mono text-[10px]">
+          {[
+            { key: 'pa', val: 'Merchant UPI ID Target' },
+            { key: 'pn', val: 'Merchant Display Identifier' },
+            { key: 'am', val: 'Transaction Quantum (Amount)' },
+            { key: 'tn', val: 'Entropy String (Note/UTR)' },
+            { key: 'redirect_url', val: 'Post-Success Handoff URL' }
+          ].map(p => (
+            <div key={p.key} className="flex items-center gap-4 bg-slate-900/40 p-3 rounded-xl border border-white/5 group hover:border-white/10 transition-colors">
+              <span className="w-24 text-neon-blue font-black uppercase tracking-widest">{p.key}</span>
+              <span className="text-slate-500 group-hover:text-slate-300 transition-colors">{p.val}</span>
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
-          <Code className="w-3 h-3" />
-          HTML Embed Code (Frontend Button)
+      <div className="space-y-4 pt-4">
+        <label className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 ml-1 flex items-center gap-2">
+          <Zap className="w-3.5 h-3.5" /> High-Intensity Embed
         </label>
         <div className="relative group">
-          <pre className="bg-slate-950 p-4 rounded-lg border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto">
+          <pre className="bg-[#020617] p-6 rounded-2xl border border-emerald-500/10 text-[11px] font-mono text-emerald-300 overflow-x-auto min-h-[140px] flex items-center">
             {htmlCode}
           </pre>
           <button
             onClick={() => copyToClipboard(htmlCode, 'code')}
-            className="absolute top-2 right-2 p-2 bg-slate-800 rounded-md hover:bg-slate-700 transition-colors"
+            className="absolute top-4 right-4 p-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-black rounded-xl transition-all shadow-lg"
           >
-            {copied === 'code' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+            {copied === 'code' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
           </button>
         </div>
       </div>

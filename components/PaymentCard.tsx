@@ -203,32 +203,55 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
       ' at ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
-  // SUCCESS SCREEN RENDER
+  // SUCCESS SCREEN RENDER (Premium Atomic Receipt)
   if (status === PaymentStatus.SUCCESS) {
     return (
-      <div className="w-full max-w-sm mx-auto bg-[#dcfce7] rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in duration-300 relative text-center text-slate-800 font-sans">
-        <div className="pt-16 pb-12 px-6 flex flex-col items-center">
-          {/* Green Check Circle */}
-          <div className="w-24 h-24 bg-[#22c55e] rounded-full flex items-center justify-center mb-6 shadow-lg shadow-green-500/30">
-            <Check className="w-12 h-12 text-white stroke-[3]" />
+      <div className="w-full max-w-sm mx-auto bg-slate-900 border border-emerald-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans">
+        {/* Success Glow Background */}
+        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 to-transparent"></div>
+
+        <div className="relative z-10 pt-12 pb-10 px-8 flex flex-col items-center">
+          {/* Animated Checkmark */}
+          <div className="relative mb-8">
+            <div className="absolute inset-0 bg-emerald-500 rounded-full blur-xl opacity-40 animate-pulse"></div>
+            <div className="relative w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/40 border-4 border-slate-900">
+              <Check className="w-12 h-12 text-black stroke-[4] animate-in slide-in-from-bottom-2" />
+            </div>
           </div>
 
-          <h2 className="text-[#166534] text-xl font-medium mb-1">Successfully paid to</h2>
-          <h1 className="text-2xl font-bold text-black mb-1">{config.pn}</h1>
-          <p className="text-slate-600 text-sm mb-8 font-medium">UPI: {config.pa}</p>
-
-          <div className="flex items-start justify-center text-5xl font-bold text-black mb-12">
-            <span className="text-3xl mt-1 mr-1">₹</span>
-            {amount || '0.00'}
+          <div className="text-center space-y-2 mb-8">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Transaction Finalized</p>
+            <h2 className="text-3xl font-black text-white tracking-tighter italic">SUCCESSFUL</h2>
           </div>
 
-          <div className="w-full bg-[#f0fdf4] py-4 rounded-t-3xl border-t border-green-200/50 absolute bottom-0 left-0">
-            <p className="text-slate-500 text-sm font-medium">
-              {formatDate()}
+          <div className="w-full bg-slate-800/50 backdrop-blur-md rounded-3xl p-6 border border-white/5 space-y-4 mb-8">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-slate-500 font-bold uppercase tracking-widest">Merchant</span>
+              <span className="text-white font-bold">{config.pn}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Amount</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-lg font-bold text-emerald-400">₹</span>
+                <span className="text-3xl font-black text-white tracking-tighter">{amount || '0.00'}</span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-[10px] pt-4 border-t border-white/5 font-mono">
+              <span className="text-slate-600">UTR: {utr || 'VALIDATED'}</span>
+              <span className="text-slate-600">{new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
+
+          <div className="w-full space-y-3">
+            <p className="text-[10px] text-center text-slate-500 font-medium tracking-widest uppercase">
+              {config.redirectUrl ? 'Handoff to Merchant...' : 'Session Expiration'}
             </p>
-            <p className="text-[#15803d] text-xs mt-2 font-bold uppercase tracking-wider animate-pulse">
-              {config.redirectUrl ? 'Redirecting to Merchant...' : 'Redirecting in'} {config.redirectUrl ? '' : `${countdown}s`}
-            </p>
+            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                style={{ width: `${(countdown / 5) * 100}%` }}
+              ></div>
+            </div>
           </div>
         </div>
       </div>
@@ -296,8 +319,8 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
                   disabled={status === PaymentStatus.VERIFYING || config.amountLocked}
                   readOnly={config.amountLocked}
                   className={`w-full bg-transparent text-3xl font-bold text-white placeholder-slate-600 focus:outline-none ${config.amountLocked
-                      ? 'opacity-70 cursor-not-allowed select-none'
-                      : ''
+                    ? 'opacity-70 cursor-not-allowed select-none'
+                    : ''
                     }`}
                   placeholder="0.00"
                 />

@@ -1,19 +1,16 @@
+import { API_BASE_URL } from '../lib/apiConfig';
 import { UPIConfig, PaymentRecord } from '../types';
-
-// This service simulates a database connection. 
-// In a full-stack app, these functions would make API calls to your Neon PostgreSQL backend.
 
 const STORAGE_KEY = 'shopc2c_config';
 
 export const saveConfig = async (config: UPIConfig): Promise<boolean> => {
   try {
-    const res = await fetch('/api/config', {
+    const res = await fetch(`${API_BASE_URL}/config`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(config)
     });
     if (res.ok) {
-      // Optimistically update local cache for immediate feel
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       return true;
     }
@@ -27,15 +24,13 @@ export const saveConfig = async (config: UPIConfig): Promise<boolean> => {
 
 export const loadConfig = async (): Promise<UPIConfig | null> => {
   try {
-    const res = await fetch('/api/config');
+    const res = await fetch(`${API_BASE_URL}/config`);
     if (res.ok) {
       const data = await res.json();
-      // Cache it
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       return data;
     }
     console.error(`[API] Load config failed: ${res.status} ${res.statusText}`);
-    // Fallback to cache if API fails/offline
     const cached = localStorage.getItem(STORAGE_KEY);
     return cached ? JSON.parse(cached) : null;
   } catch (error) {
@@ -47,7 +42,7 @@ export const loadConfig = async (): Promise<UPIConfig | null> => {
 
 export const savePaymentRecord = async (record: PaymentRecord): Promise<void> => {
   try {
-    await fetch('/api/payment', {
+    await fetch(`${API_BASE_URL}/payment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(record)
@@ -59,7 +54,7 @@ export const savePaymentRecord = async (record: PaymentRecord): Promise<void> =>
 
 export const getPaymentHistory = async (): Promise<PaymentRecord[]> => {
   try {
-    const res = await fetch('/api/payment');
+    const res = await fetch(`${API_BASE_URL}/payment`);
     return res.ok ? await res.json() : [];
   } catch (error) {
     return [];
@@ -68,10 +63,10 @@ export const getPaymentHistory = async (): Promise<PaymentRecord[]> => {
 
 export const checkDbConnection = async (): Promise<boolean> => {
   try {
-    const res = await fetch('/api/status'); // Use /api/status which is designed for this
+    const res = await fetch(`${API_BASE_URL}/status`);
     if (res.ok) {
       const data = await res.json();
-      return data.isConnected === true;
+      return data.isConnected === true || data.status === 'healthy';
     }
     return false;
   } catch (e) {
@@ -80,7 +75,7 @@ export const checkDbConnection = async (): Promise<boolean> => {
   }
 };
 
-// Seed Database with Dummy Data
+// Seed Database
 export const seedDatabase = async (): Promise<void> => {
   const dummyData = [
     { amount: "150.00", status: "SUCCESS", utr: "234567890123", method: "AI", details: "Verified by ShopC2C AI" },
@@ -95,11 +90,11 @@ export const seedDatabase = async (): Promise<void> => {
       savePaymentRecord({
         id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2) + Date.now().toString(36),
         timestamp: Date.now() - Math.floor(Math.random() * 100000000),
-        vpa: "shopc2c@upi", // default
+        vpa: "shopc2c@upi",
         ...data
       } as any)
     ));
-    window.location.reload(); // Reload to show data
+    window.location.reload();
   } catch (e) {
     console.error("Seeding failed", e);
   }

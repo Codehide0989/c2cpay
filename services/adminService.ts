@@ -1,6 +1,8 @@
+import { API_BASE_URL } from '../lib/apiConfig';
+
 export const verifyAdminPin = async (pin: string): Promise<{ success: boolean; error?: string }> => {
     try {
-        const res = await fetch('/api/admin', {
+        const res = await fetch(`${API_BASE_URL}/admin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin })
@@ -28,7 +30,7 @@ export const verifyAdminPin = async (pin: string): Promise<{ success: boolean; e
 
 export const changeAdminPin = async (currentPin: string, newPin: string): Promise<{ success: boolean; error?: string }> => {
     try {
-        const res = await fetch('/api/admin', {
+        const res = await fetch(`${API_BASE_URL}/admin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin: currentPin, newPin, action: 'change_pin' })
@@ -52,7 +54,7 @@ export const changeAdminPin = async (currentPin: string, newPin: string): Promis
 
 export const setupAdmin = async (pin: string): Promise<boolean> => {
     try {
-        const res = await fetch('/api/admin', {
+        const res = await fetch(`${API_BASE_URL}/admin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pin, action: 'setup' })

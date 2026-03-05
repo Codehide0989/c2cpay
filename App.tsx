@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Lock, Share2, Shield, Link as LinkIcon, Database, LayoutDashboard, Key, LogOut, Code, User, Loader2, Check, History, ChevronRight, ChevronDown, Activity, Globe, RefreshCw } from 'lucide-react';
+import { Settings, Lock, Share2, Shield, Link as LinkIcon, Database, LayoutDashboard, Key, LogOut, Code, User, Loader2, Check, History, ChevronRight, ChevronDown, Activity, Globe, RefreshCw, Zap } from 'lucide-react';
 import PaymentCard from './components/PaymentCard';
 import IntegrationDocs from './components/IntegrationDocs';
 import SystemCheck from './components/SystemCheck';
@@ -8,6 +8,7 @@ import BaseBoard from './components/BaseBoard';
 import { UPIConfig, PaymentStatus, PaymentRecord } from './types';
 import { saveConfig, loadConfig, checkDbConnection, getPaymentHistory, seedDatabase } from './services/storageService';
 import { verifyAdminPin, changeAdminPin } from './services/adminService';
+import { API_BASE_URL } from './lib/apiConfig';
 
 const App: React.FC = () => {
   // Main State
@@ -172,7 +173,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated && activeTab === 'apikeys') {
       // Using sessionPin for auth
-      fetch('/api/apikey', { headers: { 'x-admin-pin': sessionPin || '' } })
+      fetch(`${API_BASE_URL}/apikey`, { headers: { 'x-admin-pin': sessionPin || '' } })
         .then(res => res.json())
         .then(data => setApiKeys(data.keys || []))
         .catch(e => console.error(e));
@@ -273,7 +274,7 @@ const App: React.FC = () => {
     setIsLoading(true);
     try {
       console.log("🔑 Requesting API key generation...");
-      const res = await fetch('/api/apikey', {
+      const res = await fetch(`${API_BASE_URL}/apikey`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +290,7 @@ const App: React.FC = () => {
         setNewApiKey(data.apiKey);
 
         // Refresh list
-        const listRes = await fetch('/api/apikey', {
+        const listRes = await fetch(`${API_BASE_URL}/apikey`, {
           headers: { 'x-admin-pin': sessionPin }
         });
         const listData = await listRes.json();
@@ -316,7 +317,7 @@ const App: React.FC = () => {
 
     try {
       console.log(`🗑️ Deleting API key: ${id}`);
-      const res = await fetch(`/api/apikey?id=${id}`, {
+      const res = await fetch(`${API_BASE_URL}/apikey?id=${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-pin': sessionPin }
       });
@@ -342,31 +343,47 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative font-sans selection:bg-neon-blue selection:text-black">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative font-sans selection:bg-neon-blue selection:text-black overflow-x-hidden">
+
+      {/* Hero Background Elements */}
+      <div className="fixed inset-0 pointer-events-none z-[-1]">
+        <div className="absolute top-[10%] left-[-5%] w-[80%] md:w-[40%] h-[40%] bg-neon-blue/5 rounded-full blur-[80px] md:blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[10%] right-[-5%] w-[80%] md:w-[40%] h-[40%] bg-neon-purple/5 rounded-full blur-[80px] md:blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.03]"></div>
+      </div>
 
       {/* Navbar */}
-      <nav className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
-        <div className="flex items-center gap-3 backdrop-blur-md bg-white/5 py-2 px-4 rounded-full border border-white/10">
-          <div className="w-8 h-8 bg-gradient-to-tr from-neon-blue to-neon-purple rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(0,243,255,0.3)]">
-            <Shield className="w-4 h-4 text-black fill-current" />
+      <nav className="fixed top-0 left-0 w-full p-4 md:p-8 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-1000 bg-slate-950/50 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border-b border-white/5 md:border-none">
+        <div className="flex items-center gap-3 md:gap-4 font-sans">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
+            <div className="relative w-8 h-8 md:w-10 md:h-10 bg-slate-900 rounded-full flex items-center justify-center border border-white/10">
+              <Shield className="w-4 h-4 md:w-5 md:h-5 text-neon-blue fill-neon-blue/20" />
+            </div>
           </div>
-          <span className="text-lg font-bold tracking-tight text-white">ShopC2C</span>
+          <div className="flex flex-col">
+            <span className="text-lg md:text-xl font-black tracking-tighter text-white leading-none">ShopC2C</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-0.5 md:mt-1">Merchant Node</span>
+          </div>
         </div>
-        <div className="flex items-center gap-4">
+
+        <div className="flex items-center gap-2 md:gap-6">
           {dbStatus === 'connected' && (isAdminOpen || window.location.pathname === '/c2c') && (
-            <div className="hidden md:flex items-center gap-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 shadow-[0_0_10px_rgba(52,211,153,0.1)] animate-pulse">
-              <Database className="w-3 h-3" />
-              <span>Connected</span>
+            <div className="hidden lg:flex items-center gap-3 px-4 py-1.5 rounded-full bg-slate-900/50 border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)] backdrop-blur-md group">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Node Synchronized</span>
+              <Database className="w-3.5 h-3.5 text-emerald-500/50 group-hover:text-emerald-500 transition-colors" />
             </div>
           )}
 
           {(isAdminOpen || window.location.pathname === '/c2c') && (
             <button
               onClick={() => setIsAdminOpen(true)}
-              className="group flex items-center gap-2 text-slate-400 hover:text-white transition-all bg-black/20 hover:bg-white/10 backdrop-blur-md border border-white/5 hover:border-white/20 p-2 md:px-4 rounded-full"
+              className="group relative flex items-center gap-2 md:gap-3 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-xl border border-white/10 rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-2.5 transition-all active:scale-95 overflow-hidden font-sans"
             >
-              <Settings className="w-5 h-5 group-hover:rotate-90 transition-transform duration-500" />
-              <span className="hidden md:block text-sm font-medium">Admin</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-neon-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <Settings className="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-white md:group-hover:rotate-90 transition-all duration-500" />
+              <span className="text-[10px] md:text-sm font-black uppercase tracking-widest text-white">Dashboard</span>
             </button>
           )}
         </div>
@@ -382,21 +399,39 @@ const App: React.FC = () => {
           onAdminClick={() => setIsAdminOpen(true)}
         />
       ) : (
-        <main className="w-full max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12 z-10 pt-20 lg:pt-0">
-          <div className="hidden lg:flex flex-col items-start gap-6 max-w-lg">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon-blue/30 bg-neon-blue/5 text-neon-blue text-xs font-bold tracking-wider uppercase">
+        <main className="w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 items-center justify-center gap-12 lg:gap-16 z-10 pt-28 pb-10 md:pt-32 lg:pt-0">
+          <div className="flex flex-col items-center lg:items-start gap-6 md:gap-8 max-w-xl animate-in fade-in slide-in-from-left-8 duration-1000 text-center lg:text-left px-4">
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl border border-neon-blue/20 bg-neon-blue/5 text-neon-blue text-[10px] md:text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
               <div className="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></div>
-              Live Gateway v2.4
+              Secure Gateway Node 4.0
             </div>
-            <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight">
-              {config.title || "Secure Payments"}
-            </h1>
-            <p className="text-slate-400 text-lg leading-relaxed">
-              Accept UPI payments instantly. Powered by ShopC2C AI for fraud detection and Firebase Firestore for secure transaction logging.
-            </p>
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]">
+                {config.title || "SECURE"} <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-indigo-400 to-neon-purple">PAYMENT</span>
+              </h1>
+              <p className="text-slate-400 text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-md italic opacity-80 mx-auto lg:mx-0 font-sans">
+                "{config.pn || 'ShopC2C Store'} is processing this transaction through a cryptographically secured peer-to-peer node."
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 md:gap-8 w-full border-t border-slate-800 pt-8">
+              <div>
+                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Carrier Layer</p>
+                <p className="text-sm md:text-lg font-bold text-white flex items-center justify-center lg:justify-start gap-2">
+                  HTTP/3 Edge <Globe className="w-3 h-3 md:w-4 md:h-4 text-neon-blue" />
+                </p>
+              </div>
+              <div>
+                <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Protocol</p>
+                <p className="text-sm md:text-lg font-bold text-white flex items-center justify-center lg:justify-start gap-2">
+                  UPI Direct <Zap className="w-3 h-3 md:w-4 md:h-4 text-amber-400" />
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="w-full flex justify-center lg:justify-end">
+          <div className="w-full flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-1000">
             <PaymentCard
               config={config}
               status={status}
@@ -408,12 +443,20 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <footer className="absolute bottom-4 text-center w-full text-slate-600 text-xs flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6">
-        <span>&copy; 2025 ShopC2C Inc.</span>
-        <span className="hidden md:block w-1 h-1 rounded-full bg-slate-700"></span>
-        <span className="flex items-center gap-1">
-          <Shield className="w-3 h-3" /> Encrypted & Verified
-        </span>
+      <footer className="fixed bottom-0 left-0 w-full p-4 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 pointer-events-none opacity-40 bg-slate-950/30 backdrop-blur-sm md:bg-transparent">
+        <div className="flex items-center gap-3 text-[8px] md:text-xs font-black uppercase tracking-[0.3em] text-slate-500">
+          <span>&copy; 2026 ShopC2C Infrastructure</span>
+        </div>
+        <div className="flex items-center gap-4 md:gap-8">
+          <div className="flex items-center gap-2">
+            <Shield className="w-3 h-3 md:w-4 md:h-4 text-emerald-500/50" />
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">Atomic Encryption</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Activity className="w-3 h-3 md:w-4 md:h-4 text-neon-blue/50" />
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">L7 Health: 100%</span>
+          </div>
+        </div>
       </footer>
 
       {/* Modern Admin Modal */}
@@ -681,7 +724,7 @@ const App: React.FC = () => {
                                 if (!confirm("Backup all data collections to Firebase Storage?")) return;
                                 setIsLoading(true);
                                 try {
-                                  const res = await fetch('/api/push-to-storage', {
+                                  const res = await fetch(`${API_BASE_URL}/push-to-storage`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ pin: sessionPin })
