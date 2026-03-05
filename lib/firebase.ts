@@ -4,12 +4,11 @@ import { getStorage } from "firebase-admin/storage";
 import { getAuth } from "firebase-admin/auth";
 
 // Helper function to get environment variables
-// For serverless functions (Vercel), use process.env only
-// Prioritize FIREBASE_* variables (server-side) over VITE_FIREBASE_* (client-side)
 const getEnv = (key: string): string | undefined => {
-  // In serverless environments (Vercel), import.meta.env is not available
-  // Always use process.env for server-side Firebase Admin SDK
-  return process.env[key];
+  // In serverless environments (Vercel), process.env is standard
+  const val = process.env[key];
+  if (val) return val.trim();
+  return undefined;
 };
 
 // Helper function to parse private key with proper newline handling
@@ -17,23 +16,32 @@ const parsePrivateKey = (key: string | undefined): string => {
   if (!key) return "";
 
   try {
-    // If the key is wrapped in quotes, remove them
     let cleanedKey = key.trim();
+
+    // 1. Handle double quotes if they were pasted into Vercel dashboard
     if (cleanedKey.startsWith('"') && cleanedKey.endsWith('"')) {
       cleanedKey = cleanedKey.substring(1, cleanedKey.length - 1);
     }
 
-    // Handle escaped newlines (\n) which are common in environment variables
+    // 2. Handle escaped newlines (literal "\n" characters)
+    // We handle both single backslash \n and double backslash \\n
     const keyWithNewlines = cleanedKey.replace(/\\n/g, '\n');
 
-    // Check if the key looks basically valid (contains BEGIN PRIVATE KEY)
-    if (!keyWithNewlines.includes("BEGIN PRIVATE KEY")) {
-      console.warn("⚠️ Warning: FIREBASE_PRIVATE_KEY Env Var might be malformed (missing standard header).");
-      // If it doesn't have the header but looks like a key, try to wrap it
-      if (keyWithNewlines.length > 100 && !keyWithNewlines.includes("-----")) {
+    // 3. Validation and masking for logs
+    const hasStart = keyWithNewlines.includes("BEGIN PRIVATE KEY");
+    const hasEnd = keyWithNewlines.includes("END PRIVATE KEY");
+
+    console.log(`🔑 Private Key Info - Length: ${keyWithNewlines.length}, HasHeader: ${hasStart}, HasFooter: ${hasEnd}`);
+
+    if (!hasStart) {
+      console.warn("⚠️ Warning: FIREBASE_PRIVATE_KEY is missing standard BEGIN header.");
+      // If it looks like a base64 string but missing headers, try to wrap it
+      if (keyWithNewlines.length > 500 && !keyWithNewlines.includes("-----")) {
+        console.log("🛠️ Attempting to wrap raw private key with headers...");
         return `-----BEGIN PRIVATE KEY-----\n${keyWithNewlines}\n-----END PRIVATE KEY-----\n`;
       }
     }
+
     return keyWithNewlines;
   } catch (e) {
     console.error("Error parsing private key:", e);
@@ -41,13 +49,15 @@ const parsePrivateKey = (key: string | undefined): string => {
   }
 };
 
-const getServiceAccount = () => ({
-  projectId: getEnv("FIREBASE_PROJECT_ID") || getEnv("VITE_FIREBASE_PROJECT_ID"),
-  clientEmail: getEnv("FIREBASE_CLIENT_EMAIL") || getEnv("VITE_FIREBASE_CLIENT_EMAIL"),
-  privateKey: parsePrivateKey(
+const getServiceAccount = () => {
+  const projectId = getEnv("FIREBASE_PROJECT_ID") || getEnv("VITE_FIREBASE_PROJECT_ID");
+  const clientEmail = getEnv("FIREBASE_CLIENT_EMAIL") || getEnv("VITE_FIREBASE_CLIENT_EMAIL");
+  const privateKey = parsePrivateKey(
     getEnv("FIREBASE_PRIVATE_KEY") || getEnv("VITE_FIREBASE_PRIVATE_KEY")
-  ),
-});
+  );
+
+  return { projectId, clientEmail, privateKey };
+};
 
 // Global singleton state
 interface FirebaseState {
@@ -64,29 +74,28 @@ const state: FirebaseState = {};
  * Robust Firebase initialization for Serverless Functions
  */
 export const initFirebase = () => {
-  if (state.app) return state; // Already initialized
+  if (state.app && state.db) return state; // Already initialized
 
   const sa = getServiceAccount();
 
-  // Log credential presence (SAFE LOGGING - NO VALUES)
-  console.log("🔧 Firebase Init - Checking Credentials:", {
-    projectId: !!sa.projectId,
-    clientEmail: !!sa.clientEmail,
-    privateKey: !!sa.privateKey,
+  // Log credential presence (SAFE LOGGING)
+  console.log("🔧 Firebase Init Diagnostics:", {
+    projectId: sa.projectId || "MISSING",
+    clientEmail: sa.clientEmail ? `${sa.clientEmail.substring(0, 10)}...` : "MISSING",
+    privateKeySet: !!sa.privateKey,
     privateKeyLength: sa.privateKey?.length || 0,
-    timestamp: new Date().toISOString()
+    nodeVersion: process.version,
+    env: process.env.VERCEL_ENV || 'local'
   });
 
-  // Verify credentials
   if (!sa.projectId || !sa.clientEmail || !sa.privateKey) {
-    const missingVars = [];
-    if (!sa.projectId) missingVars.push('FIREBASE_PROJECT_ID');
-    if (!sa.clientEmail) missingVars.push('FIREBASE_CLIENT_EMAIL');
-    if (!sa.privateKey) missingVars.push('FIREBASE_PRIVATE_KEY');
+    const missing = [];
+    if (!sa.projectId) missing.push('FIREBASE_PROJECT_ID');
+    if (!sa.clientEmail) missing.push('FIREBASE_CLIENT_EMAIL');
+    if (!sa.privateKey) missing.push('FIREBASE_PRIVATE_KEY');
 
-    const error = new Error(`Missing Firebase credentials: ${missingVars.join(', ')}`);
+    const error = new Error(`Firebase credentials missing: ${missing.join(', ')}. Please check Vercel environment variables.`);
     state.initError = error;
-    console.error("❌ Firebase Init Failed - Missing Credentials:", missingVars);
     throw error;
   }
 
@@ -94,32 +103,31 @@ export const initFirebase = () => {
     const apps = getApps();
     if (apps.length === 0) {
       state.app = initializeApp({
-        credential: cert(sa),
+        credential: cert({
+          projectId: sa.projectId,
+          clientEmail: sa.clientEmail,
+          privateKey: sa.privateKey
+        }),
         storageBucket: getEnv("FIREBASE_STORAGE_BUCKET") || getEnv("VITE_FIREBASE_STORAGE_BUCKET") || `${sa.projectId}.firebasestorage.app`
       });
-      console.log("✅ Firebase Admin Initialized successfully");
+      console.log("✅ Firebase Admin - New initialization successful");
     } else {
       state.app = apps[0];
-      console.log("✅ Using existing Firebase Admin app");
+      console.log("✅ Firebase Admin - Using existing application instance");
     }
 
     state.db = getFirestore(state.app);
     state.storage = getStorage(state.app);
     state.auth = getAuth(state.app);
 
-    console.log("✅ Firebase services ready (Firestore, Storage, Auth)");
     return state;
   } catch (e: any) {
-    console.error("❌ Firebase Initialization Failed:", {
-      error: e.message,
-      code: e.code,
-      stack: e.stack,
-      timestamp: new Date().toISOString()
-    });
+    console.error("❌ Firebase Initialization Fatal Error:", e.message);
     state.initError = e;
     throw e;
   }
 };
+
 
 // Create a Proxy to lazy-load services
 const createLazyProxy = <T>(serviceName: keyof FirebaseState) => {

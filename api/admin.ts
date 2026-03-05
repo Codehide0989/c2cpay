@@ -10,29 +10,38 @@ export default async function handler(
     console.log(`[Admin API ${requestId}] ${request.method} ${request.url} - ${new Date().toISOString()}`);
 
     try {
-        // Explicitly initialize Firebase for the handler to catch errors early
+        // 1. Explicitly check for credentials first (fast fail)
+        if (!hasFirebaseCredentials()) {
+            console.error(`❌ [Admin API ${requestId}] Missing Firebase credentials in Environment`);
+            return response.status(500).json({
+                error: "Environment Configuration Error",
+                message: "Firebase credentials (Project ID, Client Email, or Private Key) are missing in Vercel environment variables.",
+                requestId
+            });
+        }
+
+        // 2. Initialize Firebase
         try {
             initFirebase();
         } catch (initError: any) {
             console.error(`❌ [Admin API ${requestId}] Firebase Admin Init Error:`, initError.message);
             return response.status(500).json({
                 error: "Database Connection Error",
-                message: "Internal server error connecting to data services.",
+                message: "Failed to initialize database connection. Check if your Private Key is correct.",
                 details: initError.message,
                 requestId
             });
         }
 
-
+        // Use the connection
         const adminsRef = db.collection('admins');
 
         // Verify PIN
         if (request.method === 'POST') {
-            const { pin, action } = request.body;
+            const { pin, action } = request.body || {};
 
             // Validate request body
             if (!request.body || typeof request.body !== 'object') {
-                console.error(`❌ [Admin API ${requestId}] Invalid request body`);
                 return response.status(400).json({
                     error: "Invalid Request",
                     message: "Request body must be a valid JSON object",
@@ -41,7 +50,6 @@ export default async function handler(
             }
 
             if (!pin && action !== 'change_pin' && action !== 'setup') {
-                console.error(`❌ [Admin API ${requestId}] PIN is required for action: ${action || 'login'}`);
                 return response.status(400).json({
                     error: "PIN is required",
                     requestId
@@ -50,7 +58,12 @@ export default async function handler(
 
             try {
                 // Fetch first admin document
-                const snapshot = await adminsRef.limit(1).get();
+                const snapshot = await adminsRef.limit(1).get()
+                    .catch(e => {
+                        console.error(`❌ [Admin API ${requestId}] Firestore Get Failed:`, e.message);
+                        throw new Error(`Firestore Access Failed: ${e.message}. Ensure Firestore is enabled in your project.`);
+                    });
+
                 let adminDoc = snapshot.empty ? null : snapshot.docs[0];
                 let adminData = adminDoc ? adminDoc.data() : null;
 
@@ -61,14 +74,12 @@ export default async function handler(
                             pin: pin || '1234',
                             updated_at: Timestamp.now()
                         });
-                        console.log(`✅ [Admin API ${requestId}] Admin configured successfully`);
                         return response.status(200).json({
                             success: true,
                             message: "Admin configured successfully.",
                             requestId
                         });
                     } else {
-                        console.warn(`⚠️ [Admin API ${requestId}] Admin already exists`);
                         return response.status(400).json({
                             error: "Admin already exists.",
                             requestId
@@ -80,7 +91,6 @@ export default async function handler(
                 if (action === 'change_pin') {
                     const { newPin } = request.body;
                     if (!adminDoc) {
-                        console.error(`❌ [Admin API ${requestId}] Admin not found for PIN change`);
                         return response.status(404).json({
                             error: "Admin not found.",
                             requestId
@@ -88,7 +98,6 @@ export default async function handler(
                     }
 
                     if (adminData?.pin !== pin) {
-                        console.warn(`⚠️ [Admin API ${requestId}] Incorrect current PIN`);
                         return response.status(401).json({
                             error: "Current PIN is incorrect.",
                             requestId
@@ -96,7 +105,6 @@ export default async function handler(
                     }
 
                     if (!newPin || newPin.length < 4) {
-                        console.error(`❌ [Admin API ${requestId}] Invalid new PIN length`);
                         return response.status(400).json({
                             error: "New PIN must be at least 4 digits.",
                             requestId
@@ -108,7 +116,6 @@ export default async function handler(
                         updated_at: Timestamp.now()
                     });
 
-                    console.log(`✅ [Admin API ${requestId}] PIN updated successfully`);
                     return response.status(200).json({
                         success: true,
                         message: "PIN updated successfully.",
@@ -125,9 +132,7 @@ export default async function handler(
                             updated_at: Timestamp.now()
                         });
                         adminData = { pin: '1234' };
-                        console.log(`✅ [Admin API ${requestId}] Default admin seeded`);
                     } catch (seedError: any) {
-                        console.error(`❌ [Admin API ${requestId}] Failed to seed admin:`, seedError);
                         return response.status(500).json({
                             error: "Database Write Failed (Seeding)",
                             details: seedError.message,
@@ -137,13 +142,11 @@ export default async function handler(
                 }
 
                 if (adminData?.pin === pin) {
-                    console.log(`✅ [Admin API ${requestId}] Admin login successful`);
                     return response.status(200).json({
                         success: true,
                         requestId
                     });
                 } else {
-                    console.warn(`⚠️ [Admin API ${requestId}] Invalid PIN attempt`);
                     return response.status(401).json({
                         error: "Invalid PIN",
                         requestId
@@ -151,21 +154,12 @@ export default async function handler(
                 }
 
             } catch (error: any) {
-                console.error(`❌ [Admin API ${requestId}] Database Operation Error:`, {
-                    error: error.message,
-                    code: error.code,
-                    timestamp: new Date().toISOString()
-                });
-
-                let detailedMessage = error.message;
-                if (error.code === 5 || error.message.includes('NOT_FOUND') || error.message.includes('not found')) {
-                    detailedMessage = "Firebase Project or Database '(default)' not found. Ensure Firestore is enabled in Firebase Console and Project ID matches your .env.local.";
-                }
+                console.error(`❌ [Admin API ${requestId}] Database Operation Error:`, error);
 
                 return response.status(500).json({
                     error: 'Database Operation Error',
-                    details: detailedMessage,
-                    code: error.code,
+                    message: "The server encountered an error while communicating with Firestore.",
+                    details: error.message,
                     requestId
                 });
             }
@@ -175,10 +169,14 @@ export default async function handler(
 
     } catch (criticalError: any) {
         console.error("🔥 Critical Handler Crash:", criticalError);
-        return response.status(500).json({
-            error: "Critical Server Error",
-            message: "An unexpected error occurred in the admin handler.",
-            details: criticalError.message
-        });
+        // Ensure we ALWAYS return JSON
+        if (!response.writableEnded) {
+            return response.status(500).json({
+                error: "Critical Server Error",
+                message: criticalError.message || "An unexpected error occurred.",
+                requestId
+            });
+        }
     }
 }
+
