@@ -20,7 +20,7 @@ export default async function handler(
             const result = await databases.listDocuments(
                 APPWRITE_DATABASE_ID,
                 appwriteConfig.collections.configs,
-                [Query.orderDesc('updatedAt'), Query.limit(1)]
+                [Query.orderDesc('$updatedAt'), Query.limit(1)]
             );
 
             if (result.documents.length > 0) {
@@ -39,7 +39,7 @@ export default async function handler(
             const result = await databases.listDocuments(
                 APPWRITE_DATABASE_ID,
                 appwriteConfig.collections.configs,
-                [Query.orderDesc('updatedAt'), Query.limit(1)]
+                [Query.orderDesc('$updatedAt'), Query.limit(1)]
             );
 
             // Build data object
@@ -51,8 +51,7 @@ export default async function handler(
                 title: title || 'Secure Payment',
                 amountLocked: amountLocked === true,
                 maintenanceMode: maintenanceMode === true,
-                maintenanceMessage: maintenanceMessage || '',
-                updatedAt: new Date().toISOString()
+                maintenanceMessage: maintenanceMessage || ''
             };
 
             if (maintenanceEndTime !== undefined) {

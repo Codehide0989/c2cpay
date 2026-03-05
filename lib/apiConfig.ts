@@ -33,9 +33,14 @@ export const getBaseUrl = (): string => {
  * In production (Vercel), API routes are served from the same domain under /api.
  */
 export const getApiServerUrl = (): string => {
+    // Client-side: always use same origin (Vite proxy in dev, Vercel rewrites in prod)
+    if (!isServer) {
+        return '';
+    }
+
     const env = typeof process !== 'undefined' ? process.env : {};
 
-    // If we have an explicit environment variable, use it
+    // Server-side: use explicit env var if set
     if (env.API_SERVER_URL) {
         return env.API_SERVER_URL;
     }
@@ -50,7 +55,7 @@ export const getApiServerUrl = (): string => {
     }
 
     // In production on Vercel, the API is at the same origin
-    return isServer ? '' : window.location.origin;
+    return '';
 };
 
 export const API_SERVER_URL = getApiServerUrl();

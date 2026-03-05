@@ -64,7 +64,7 @@ export default async function handler(
     `;
 
         const result = await ai.models.generateContent({
-            model: 'gemini-1.5-flash', // Standard reliable model
+            model: 'gemini-2.5-flash', // Standard reliable model
             contents: {
                 parts: [
                     { inlineData: { mimeType: 'image/jpeg', data: imageBase64 } },

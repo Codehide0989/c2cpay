@@ -206,7 +206,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
   // SUCCESS SCREEN RENDER (Premium Atomic Receipt)
   if (status === PaymentStatus.SUCCESS) {
     return (
-      <div className="w-full max-w-sm mx-auto bg-slate-900 border border-emerald-500/30 rounded-[2.5rem] overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans">
+      <div className="w-full max-w-[340px] sm:max-w-[360px] mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans scale-[0.98] sm:scale-100">
         {/* Success Glow Background */}
         <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 to-transparent"></div>
 
@@ -261,7 +261,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
   // DEFAULT PAYMENT CARD RENDER
   return (
     <div
-      className="perspective-1000 w-full max-w-sm md:max-w-md mx-auto p-4 transition-all duration-500"
+      className="perspective-1000 w-full max-w-[340px] sm:max-w-[360px] mx-auto p-3 sm:p-4 transition-all duration-500 scale-[0.98] sm:scale-100"
       onMouseEnter={() => setIsHovered(true)}
     >
       <div
@@ -274,7 +274,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
         }}
         className={`
           relative w-full bg-slate-900/60 backdrop-blur-2xl border border-white/10
-          rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden preserve-3d
+          rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden preserve-3d
           transition-all duration-500 group
           ${status === PaymentStatus.FAILED ? 'border-rose-500/50 shadow-[0_0_50px_-10px_rgba(244,63,94,0.3)]' : ''}
         `}
@@ -286,11 +286,11 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
         {/* Noise Texture Overlay */}
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay pointer-events-none"></div>
 
-        <div className="relative z-10 p-6 md:p-8 flex flex-col items-center gap-6">
+        <div className="relative z-10 p-5 flex flex-col items-center gap-4 sm:gap-5">
 
           {/* Header */}
           <div className="text-center w-full">
-            <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight truncate px-2">
+            <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight truncate px-2">
               {config.pn}
             </h2>
             <div
@@ -318,7 +318,7 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
                   onChange={(e) => setAmount(e.target.value)}
                   disabled={status === PaymentStatus.VERIFYING || config.amountLocked}
                   readOnly={config.amountLocked}
-                  className={`w-full bg-transparent text-3xl font-bold text-white placeholder-slate-600 focus:outline-none ${config.amountLocked
+                  className={`w-full bg-transparent text-2xl font-bold text-white placeholder-slate-600 focus:outline-none ${config.amountLocked
                     ? 'opacity-70 cursor-not-allowed select-none'
                     : ''
                     }`}
@@ -338,9 +338,9 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ config, status, setStatus, am
           </div>
 
           {/* QR Code Section */}
-          <div className="relative w-full max-w-[220px] mx-auto">
+          <div className="relative w-full max-w-[180px] sm:max-w-[200px] mx-auto">
             <div className={`
-              w-full aspect-square bg-white p-3 rounded-2xl flex items-center justify-center shadow-xl
+              w-full aspect-square bg-white p-2.5 rounded-2xl flex items-center justify-center shadow-xl
               transition-all duration-500 relative overflow-hidden
             `}>
               {/* Decorative corners for QR */}

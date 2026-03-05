@@ -9,6 +9,7 @@ import { UPIConfig, PaymentStatus, PaymentRecord } from './types';
 import { saveConfig, loadConfig, checkDbConnection, getPaymentHistory, seedDatabase } from './services/storageService';
 import { verifyAdminPin, changeAdminPin } from './services/adminService';
 import { API_BASE_URL } from './lib/apiConfig';
+import client from './lib/appwriteClient';
 
 const App: React.FC = () => {
   // Main State
@@ -60,6 +61,9 @@ const App: React.FC = () => {
 
   // Initialization & URL Handling
   useEffect(() => {
+    // Verify Appwrite client setup on app start
+    client.ping().catch(() => { });
+
     const init = async () => {
       // 1. Check Database Connection (Non-blocking)
       checkDbConnection().then(isConnected => {
@@ -343,7 +347,7 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 md:p-8 relative font-sans selection:bg-neon-blue selection:text-black overflow-x-hidden">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-3 sm:p-4 md:p-8 relative font-sans selection:bg-neon-blue selection:text-black overflow-x-hidden">
 
       {/* Hero Background Elements */}
       <div className="fixed inset-0 pointer-events-none z-[-1]">
@@ -353,7 +357,7 @@ const App: React.FC = () => {
       </div>
 
       {/* Navbar */}
-      <nav className="fixed top-0 left-0 w-full p-4 md:p-8 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-1000 bg-slate-950/50 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border-b border-white/5 md:border-none">
+      <nav className="fixed top-0 left-0 w-full p-3 sm:p-4 md:p-8 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-1000 bg-slate-950/70 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border-b border-white/5 md:border-none">
         <div className="flex items-center gap-3 md:gap-4 font-sans">
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
@@ -399,14 +403,14 @@ const App: React.FC = () => {
           onAdminClick={() => setIsAdminOpen(true)}
         />
       ) : (
-        <main className="w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 items-center justify-center gap-12 lg:gap-16 z-10 pt-28 pb-10 md:pt-32 lg:pt-0">
+        <main className="w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 items-center justify-center gap-8 sm:gap-12 lg:gap-16 z-10 pt-24 sm:pt-28 pb-16 sm:pb-10 md:pt-32 lg:pt-0">
           <div className="flex flex-col items-center lg:items-start gap-6 md:gap-8 max-w-xl animate-in fade-in slide-in-from-left-8 duration-1000 text-center lg:text-left px-4">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-2xl border border-neon-blue/20 bg-neon-blue/5 text-neon-blue text-[10px] md:text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
               <div className="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></div>
               Secure Gateway Node 4.0
             </div>
             <div className="space-y-4">
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]">
                 {config.title || "SECURE"} <br />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-indigo-400 to-neon-purple">PAYMENT</span>
               </h1>
@@ -443,7 +447,7 @@ const App: React.FC = () => {
         </main>
       )}
 
-      <footer className="fixed bottom-0 left-0 w-full p-4 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 pointer-events-none opacity-40 bg-slate-950/30 backdrop-blur-sm md:bg-transparent">
+      <footer className="fixed bottom-0 left-0 w-full p-2 sm:p-4 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 md:gap-6 pointer-events-none opacity-40 bg-slate-950/50 backdrop-blur-sm md:bg-transparent z-20">
         <div className="flex items-center gap-3 text-[8px] md:text-xs font-black uppercase tracking-[0.3em] text-slate-500">
           <span>&copy; 2026 ShopC2C Infrastructure</span>
         </div>
@@ -461,11 +465,11 @@ const App: React.FC = () => {
 
       {/* Modern Admin Modal */}
       {isAdminOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-          <div className="bg-[#0f172a] border border-slate-700 w-full max-w-2xl h-auto max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xl">
+          <div className="bg-[#0f172a] border border-slate-700 w-full max-w-2xl h-auto max-h-[90vh] sm:max-h-[85vh] rounded-xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
 
             {/* Header */}
-            <div className="flex items-center justify-between p-4 md:p-6 border-b border-slate-700/50 bg-slate-900">
+            <div className="flex items-center justify-between p-3 sm:p-4 md:p-6 border-b border-slate-700/50 bg-slate-900">
               <div className="flex items-center gap-3">
                 <div className="bg-neon-blue/10 p-2 rounded-lg">
                   {isAuthenticated ? <LayoutDashboard className="w-5 h-5 text-neon-blue" /> : <Lock className="w-5 h-5 text-neon-blue" />}
@@ -478,7 +482,7 @@ const App: React.FC = () => {
               <button onClick={() => setIsAdminOpen(false)} className="text-slate-400 hover:text-white p-2 hover:bg-white/5 rounded-full transition-colors">✕</button>
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-slate-900/50 p-6">
+            <div className="flex-1 overflow-y-auto bg-slate-900/50 p-3 sm:p-4 md:p-6">
               {!isAuthenticated ? (
                 // Login Screen
                 <div className="h-full flex flex-col items-center justify-center py-8 space-y-6">
@@ -526,34 +530,34 @@ const App: React.FC = () => {
                 // Dashboard Content
                 <div className="flex flex-col h-full">
                   {/* Tabs */}
-                  <div className="flex gap-2 mb-6 p-1 bg-slate-800/50 rounded-xl border border-slate-700/50">
+                  <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 p-1 bg-slate-800/50 rounded-xl border border-slate-700/50 overflow-x-auto">
                     <button
                       onClick={() => setActiveTab('settings')}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'settings' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
+                      className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-medium transition-all whitespace-nowrap min-w-0 ${activeTab === 'settings' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                     >
                       <Settings className="w-4 h-4" />
-                      Configuration
+                      <span className="hidden sm:inline">Configuration</span><span className="sm:hidden">Config</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('history')}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'history' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
+                      className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-medium transition-all whitespace-nowrap min-w-0 ${activeTab === 'history' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                     >
                       <History className="w-4 h-4" />
                       History
                     </button>
                     <button
                       onClick={() => setActiveTab('integration')}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'integration' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
+                      className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-medium transition-all whitespace-nowrap min-w-0 ${activeTab === 'integration' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                     >
                       <Code className="w-4 h-4" />
-                      Integration Docs
+                      <span className="hidden sm:inline">Integration</span><span className="sm:hidden">Docs</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('apikeys')}
-                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'apikeys' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
+                      className={`flex-1 flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2.5 rounded-lg text-[10px] sm:text-sm font-medium transition-all whitespace-nowrap min-w-0 ${activeTab === 'apikeys' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-slate-700/50'}`}
                     >
                       <Key className="w-4 h-4" />
-                      API Keys
+                      <span className="hidden sm:inline">API Keys</span><span className="sm:hidden">Keys</span>
                     </button>
                   </div>
 

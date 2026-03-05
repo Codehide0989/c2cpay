@@ -78,10 +78,17 @@ export const checkAppwriteHealth = async () => {
         let errMessage = [];
 
         try {
+            // Use a simple list with limit 1 — avoid querying attributes that may not be indexed
             await databases.listDocuments(APPWRITE_DATABASE_ID, appwriteConfig.collections.configs, [Query.limit(1)]);
             dbOk = true;
         } catch (e: any) {
-            errMessage.push(`DB: ${e.message}`);
+            // If the collection doesn't exist (404), DB is accessible but collection is missing
+            if (e.code === 404) {
+                dbOk = true; // DB is reachable, just collection missing
+                errMessage.push(`DB: Collection 'configs' not found (auto-create on first use)`);
+            } else {
+                errMessage.push(`DB: ${e.message}`);
+            }
         }
 
         try {

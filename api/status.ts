@@ -25,6 +25,7 @@ export default async function handler(
         isConnected: health.healthy,
         status: systemStatus,
         responseTime: health.responseTime || 0,
+        envVarSet: !!(APPWRITE_ENDPOINT && APPWRITE_PROJECT_ID),
         envVars: {
             endpoint: APPWRITE_ENDPOINT ? 'Synced' : 'Missing',
             projectId: APPWRITE_PROJECT_ID ? 'Synced' : 'Missing',

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently \"cd server && npm run dev\" \"vite\"",
     "build": "npx vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:setup": "tsx scripts/setupAppwrite.ts"
   },
   "dependencies": {
     "@google/genai": "^1.33.0",
