@@ -16,8 +16,8 @@
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@astrojs/node": "^9.0.2",
     "@astrojs/tailwind": "^5.1.4",
+    "@astrojs/vercel": "^9.0.4",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.4.1",
     "astro": "^5.4.1",

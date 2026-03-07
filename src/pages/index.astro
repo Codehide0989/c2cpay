@@ -5,9 +5,14 @@ import MaintenanceView from "../components/MaintenanceView.astro";
 
 // Config fetched via Astro server-side
 import { prisma } from "../lib/prisma";
-const configRecord = await prisma.config.findUnique({
-    where: { id: "singleton" },
-});
+let configRecord = null;
+try {
+    configRecord = await prisma.config.findUnique({
+        where: { id: "singleton" },
+    });
+} catch (e) {
+    console.error("DB Fetch Error:", e);
+}
 
 // Default config if DB empty
 const config = {
@@ -40,7 +45,7 @@ const config = {
             </div>
 
             <!-- Navbar Minimal -->
-            <nav class="fixed top-0 left-0 w-full p-3 sm:p-4 md:p-8 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-1000 bg-slate-950/70 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border-b border-white/5 md:border-none">
+            <nav class="header fixed top-0 left-0 w-full p-3 sm:p-4 md:p-8 flex justify-between items-center z-50 animate-in fade-in slide-in-from-top-4 duration-1000 bg-slate-950/70 md:bg-transparent backdrop-blur-lg md:backdrop-blur-none border-b border-white/5 md:border-none">
                 <div class="flex items-center gap-3 md:gap-4 font-sans">
                     <div class="relative group">
                         <div class="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-purple rounded-full blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
@@ -67,7 +72,7 @@ const config = {
 
             <!-- Main Payment View -->
             <main class="w-full max-w-7xl mx-auto flex flex-col lg:grid lg:grid-cols-2 items-center justify-center gap-8 sm:gap-12 lg:gap-16 z-10 pt-24 sm:pt-28 pb-16 sm:pb-10 md:pt-32 lg:pt-0">
-                <div class="flex flex-col items-center lg:items-start gap-6 md:gap-8 max-w-xl animate-in fade-in slide-in-from-left-8 duration-1000 text-center lg:text-left px-4">
+                <div class="hero-section flex flex-col items-center lg:items-start gap-6 md:gap-8 max-w-xl animate-in fade-in slide-in-from-left-8 duration-1000 text-center lg:text-left px-4">
                     <div class="inline-flex items-center gap-3 px-4 py-2 rounded-2xl border border-neon-blue/20 bg-neon-blue/5 text-neon-blue text-[10px] md:text-xs font-black tracking-[0.2em] uppercase backdrop-blur-sm">
                         <div class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"></div>
                         Secure Gateway Node 4.0
@@ -100,7 +105,7 @@ const config = {
                     </div>
                 </div>
 
-                <div class="w-full flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-1000">
+                <div class="payment-card-section w-full flex justify-center lg:justify-end animate-in fade-in slide-in-from-right-8 duration-1000">
                     <PaymentCard config={{
                         pa: config.pa,
                         pn: config.pn,
@@ -111,6 +116,29 @@ const config = {
                     }} />
                 </div>
             </main>
+
+            <style>
+                @media (max-width: 768px) {
+                    .header {
+                        display: none !important;
+                    }
+                    .hero-section {
+                        display: none !important;
+                    }
+                    main {
+                        padding-top: 0 !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        min-height: 100vh !important;
+                    }
+                    .payment-card-section {
+                        width: 100% !important;
+                        justify-content: center !important;
+                        margin: 0 !important;
+                    }
+                }
+            </style>
         </div>
     )}
 </MainLayout>
