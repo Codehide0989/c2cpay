@@ -30,13 +30,7 @@ const { config } = Astro.props;
         #mainCard {
             border-radius: 18px;
             padding: 18px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        #mainCard:hover {
-            transform: translateY(-5px) scale(1.02);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
         }
         #mainCard > div > div {
             margin-bottom: 14px;
@@ -468,20 +462,6 @@ const { config } = Astro.props;
 
     amountInput?.addEventListener("input", updateLink);
     updateLink();
-
-    // Mouse tilt logic
-    mainCard?.addEventListener("mousemove", (e: MouseEvent) => {
-        const rect = mainCard.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -5;
-        const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 5;
-        mainCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    });
-
-    mainCard?.addEventListener("mouseleave", () => {
-        mainCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
-    });
 
     function showError(msg: string) {
         if (!errorMsgText || !errorBox || !mainCard) return;
