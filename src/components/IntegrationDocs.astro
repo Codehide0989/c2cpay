@@ -10,7 +10,7 @@ const { baseUrl, exampleLink } = Astro.props;
 
 const htmlCode = `
 <!-- ShopC2C Atomic Payment Button -->
-<a href="${exampleLink}" 
+<a href="${exampleLink}&api_key=pk_live_YOUR_KEY" 
    target="_blank" 
    style="background: linear-gradient(to right, #00f3ff, #d946ef); color: #000; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: 900; font-family: 'Outfit', sans-serif; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);">
    SECURE UPI PAY
@@ -20,6 +20,7 @@ const apiCurl = `
 # Backend Verification API
 curl -X POST ${baseUrl}api/verify \\
   -H "Content-Type: application/json" \\
+  -H "x-api-key: pk_live_YOUR_KEY" \\
   -d '{
     "imageBase64": "IMAGE_DATA_HERE",
     "expectedAmount": "100",
@@ -190,6 +191,7 @@ curl -X POST ${baseUrl}api/verify \\
                     { key: "am", val: "Transaction Quantum (Amount)" },
                     { key: "tn", val: "Entropy String (Note/UTR)" },
                     { key: "redirect_url", val: "Post-Success Handoff URL" },
+                    { key: "api_key", val: "Your Live API Key (Required)" },
                 ].map((p) => (
                     <div class="flex items-center gap-4 bg-slate-900/40 p-3 rounded-xl border border-white/5 group hover:border-white/10 transition-colors">
                         <span class="w-24 text-neon-blue font-black uppercase tracking-widest">
