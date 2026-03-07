@@ -17,13 +17,54 @@ const { config } = Astro.props;
 
 <div
     id="paymentCardContainer"
-    class="perspective-1000 w-full max-w-[320px] sm:max-w-[340px] mx-auto p-3 sm:p-4 transition-all duration-500 scale-[0.98] sm:scale-100"
+    class="perspective-1000 w-full mx-auto p-3 sm:p-4 transition-all duration-500"
     data-config={JSON.stringify(config)}
 >
+    <style>
+        #paymentCardContainer {
+            width: clamp(280px, 85vw, 380px);
+            padding: 18px;
+            border-radius: 18px;
+            margin: auto;
+        }
+        #mainCard {
+            border-radius: 18px;
+            padding: 18px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #mainCard:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.2);
+        }
+        #mainCard > div > div {
+            margin-bottom: 14px;
+        }
+        #mainCard > div > div:last-child {
+            margin-bottom: 0;
+        }
+        .qr-code-container {
+            width: clamp(190px, 60vw, 230px);
+            height: auto;
+            margin: 0 auto;
+        }
+        .amount-box {
+            padding: 14px !important;
+        }
+        #amountInput {
+            font-size: 18px !important;
+        }
+        #utrInput {
+            padding: 12px !important;
+            font-size: 14px !important;
+        }
+    </style>
+
     <!-- Success Screen (Hidden by default) -->
     <div
         id="successScreen"
-        class="hidden w-full max-w-[320px] sm:max-w-[340px] mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans scale-[0.98] sm:scale-100"
+        class="hidden w-full bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans"
     >
         <div
             class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 to-transparent"
@@ -124,7 +165,7 @@ const { config } = Astro.props;
     <!-- Main Card -->
     <div
         id="mainCard"
-        class="relative w-full bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-500 group"
+        class="relative w-full bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden group"
     >
         <div
             id="cardGlow1"
@@ -137,13 +178,11 @@ const { config } = Astro.props;
         >
         </div>
         <div
-            class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay pointer-events-none"
+            class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-20 pointer-events-none"
         >
         </div>
 
-        <div
-            class="relative z-10 p-5 flex flex-col items-center gap-4 sm:gap-5"
-        >
+        <div class="relative z-10 flex flex-col items-center gap-4 sm:gap-5">
             <!-- Header -->
             <div class="text-center w-full">
                 <h2
@@ -178,7 +217,7 @@ const { config } = Astro.props;
                 >
                 </div>
                 <div
-                    class="relative bg-slate-800/80 rounded-xl p-1 border border-white/10"
+                    class="relative bg-slate-800/80 rounded-xl p-1 border border-white/10 amount-box"
                 >
                     <div class="flex items-center justify-between px-4 py-2">
                         <span
@@ -242,7 +281,7 @@ const { config } = Astro.props;
             </div>
 
             <!-- QR Base Component Included from Layout later or hardcoded -->
-            <div class="relative w-full max-w-[180px] sm:max-w-[200px] mx-auto">
+            <div class="relative qr-code-container">
                 <div
                     class="w-full aspect-square bg-white p-2.5 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-500 relative overflow-hidden"
                 >

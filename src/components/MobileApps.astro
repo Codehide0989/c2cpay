@@ -2,137 +2,134 @@
 // MobileApps.astro
 ---
 
-<div
-    class="w-full grid grid-cols-2 gap-3 mt-6 lg:hidden"
-    id="mobileAppsContainer"
->
-    <div class="col-span-2 text-center mb-2">
+<div class="w-full grid grid-cols-2 gap-3 mt-6" id="mobileAppsContainer">
+    <div class="col-span-2 text-center mb-2" id="selectUpiAppTitle">
         <p
             class="text-[10px] text-slate-500 uppercase tracking-[0.3em] font-black"
         >
-            Mobile Carrier Select
+            Select UPI App
         </p>
     </div>
 
     <a
         href="#"
         id="gpayLink"
-        class="relative overflow-hidden group flex items-center justify-center gap-2.5 p-3.5 rounded-2xl font-bold text-xs transition-all duration-300 transform active:scale-95 bg-slate-900/50 backdrop-blur-md border border-blue-500/30 text-blue-400 shadow-lg shadow-blue-500/20 hover:shadow-xl"
+        class="upi-button relative overflow-hidden group flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl font-bold text-[14px] transition-all duration-300 transform active:scale-95 bg-slate-800/50 backdrop-blur-md border border-white/10 text-white hover:border-blue-500/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)]"
     >
         <div
-            class="absolute inset-0 bg-gradient-to-br from-[#4285F4]/20 to-transparent opacity-50"
+            class="p-2 rounded-xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform"
         >
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
         </div>
-        <div
-            class="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"
-        >
-        </div>
-        <div class="relative z-10 flex items-center gap-2">
-            <div class="p-1 rounded-lg bg-white/5">
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    ><path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
-            <span class="tracking-tight uppercase">Google Pay</span>
-        </div>
+        <span class="tracking-tight uppercase">G-Pay</span>
     </a>
 
     <a
         href="#"
         id="phonepeLink"
-        class="relative overflow-hidden group flex items-center justify-center gap-2.5 p-3.5 rounded-2xl font-bold text-xs transition-all duration-300 transform active:scale-95 bg-slate-900/50 backdrop-blur-md border border-purple-500/30 text-purple-400 shadow-lg shadow-purple-500/20 hover:shadow-xl"
+        class="upi-button relative overflow-hidden group flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl font-bold text-[14px] transition-all duration-300 transform active:scale-95 bg-slate-800/50 backdrop-blur-md border border-white/10 text-white hover:border-purple-500/50 hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
     >
         <div
-            class="absolute inset-0 bg-gradient-to-br from-[#5f259f]/20 to-transparent opacity-50"
+            class="p-2 rounded-xl bg-purple-500/10 text-purple-400 group-hover:scale-110 transition-transform"
         >
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                ></path>
+            </svg>
         </div>
-        <div
-            class="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"
-        >
-        </div>
-        <div class="relative z-10 flex items-center gap-2">
-            <div class="p-1 rounded-lg bg-white/5">
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    ><path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                    ></path></svg>
-            </div>
-            <span class="tracking-tight uppercase">PhonePe</span>
-        </div>
+        <span class="tracking-tight uppercase">PhonePe</span>
     </a>
 
     <a
         href="#"
         id="paytmLink"
-        class="relative overflow-hidden group flex items-center justify-center gap-2.5 p-3.5 rounded-2xl font-bold text-xs transition-all duration-300 transform active:scale-95 bg-slate-900/50 backdrop-blur-md border border-sky-500/30 text-sky-400 shadow-lg shadow-sky-500/20 hover:shadow-xl"
+        class="upi-button relative overflow-hidden group flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl font-bold text-[14px] transition-all duration-300 transform active:scale-95 bg-slate-800/50 backdrop-blur-md border border-white/10 text-white hover:border-sky-500/50 hover:shadow-[0_0_15px_rgba(14,165,233,0.3)]"
     >
         <div
-            class="absolute inset-0 bg-gradient-to-br from-[#00baf2]/20 to-transparent opacity-50"
+            class="p-2 rounded-xl bg-sky-500/10 text-sky-400 group-hover:scale-110 transition-transform"
         >
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                ></path>
+            </svg>
         </div>
-        <div
-            class="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"
-        >
-        </div>
-        <div class="relative z-10 flex items-center gap-2">
-            <div class="p-1 rounded-lg bg-white/5">
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    ><path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                    ></path></svg>
-            </div>
-            <span class="tracking-tight uppercase">Paytm</span>
-        </div>
+        <span class="tracking-tight uppercase">Paytm</span>
     </a>
 
     <a
         href="#"
         id="genericLink"
-        class="relative overflow-hidden group flex items-center justify-center gap-2.5 p-3.5 rounded-2xl font-bold text-xs transition-all duration-300 transform active:scale-95 bg-slate-900/50 backdrop-blur-md border border-rose-500/30 text-rose-400 shadow-lg shadow-rose-500/20 hover:shadow-xl"
+        class="upi-button relative overflow-hidden group flex flex-col items-center justify-center gap-2 p-3.5 rounded-2xl font-bold text-[14px] transition-all duration-300 transform active:scale-95 bg-slate-800/50 backdrop-blur-md border border-white/10 text-white hover:border-emerald-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)]"
     >
         <div
-            class="absolute inset-0 bg-gradient-to-br from-[#e91e63]/20 to-transparent opacity-50"
+            class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform"
         >
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                ></path>
+            </svg>
         </div>
-        <div
-            class="absolute inset-0 bg-white/5 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12"
-        >
-        </div>
-        <div class="relative z-10 flex items-center gap-2">
-            <div class="p-1 rounded-lg bg-white/5">
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    ><path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    ></path></svg>
-            </div>
-            <span class="tracking-tight uppercase">Generic App</span>
-        </div>
+        <span class="tracking-tight uppercase">UPI App</span>
     </a>
 </div>
+
+<style>
+    #mobileAppsContainer {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    @media (min-width: 768px) {
+        #mobileAppsContainer {
+            display: none;
+        }
+    }
+
+    .upi-button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 14px;
+        font-size: 14px;
+    }
+    .upi-button:hover {
+        background: rgba(255, 255, 255, 0.05);
+        transform: translateY(-2px);
+    }
+</style>
 
 <script>
     window.addEventListener("updateUpiLink", (e: any) => {
@@ -146,9 +143,10 @@
             "genericLink",
         ) as HTMLAnchorElement;
 
-        if (gpay) gpay.href = upiLink.replace("upi://", "tez://");
-        if (phonepe) phonepe.href = upiLink.replace("upi://", "phonepe://");
-        if (paytm) paytm.href = upiLink.replace("upi://", "paytmmp://");
+        if (gpay) gpay.href = upiLink.replace("upi://pay", "tez://upi/pay");
+        if (phonepe)
+            phonepe.href = upiLink.replace("upi://pay", "phonepe://pay");
+        if (paytm) paytm.href = upiLink.replace("upi://pay", "paytmmp://pay");
         if (generic) generic.href = upiLink;
     });
 </script>
