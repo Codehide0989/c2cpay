@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && astro check && astro build",
     "preview": "astro preview",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
