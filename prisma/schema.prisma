@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  amount    String
+  vpa       String
+  pn        String?
+  tn        String?
+  status    String   @default("IDLE") // IDLE, VERIFYING, SUCCESS, FAILED, SCANNING
+  utr       String?
+  method    String?  // MANUAL, AI
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  qrId      String?
+  status    String
+  amount    Float
+  createdAt DateTime @default(now())
+}
+
+model QRCode {
+  id        String   @id @default(cuid())
+  amount    Float
+  userId    String?
+  createdAt DateTime @default(now())
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  message   String
+  level     String   @default("INFO") // INFO, WARN, ERROR
+  createdAt DateTime @default(now())
+}
+
+model AdminEvent {
+  id        String   @id @default(cuid())
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Config {
+  id                 String  @id @default("singleton")
+  pa                 String
+  pn                 String
+  am                 String?
+  tn                 String?
+  title              String?
+  amountLocked       Boolean @default(false)
+  redirectUrl        String?
+  maintenanceMode    Boolean @default(false)
+  maintenanceMessage String?
+  maintenanceEndTime Float?
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  createdAt DateTime @default(now())
+}

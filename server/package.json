@@ -1,7 +1,0 @@
-{
-    "name": "shopc2c-server",
-    "version": "1.0.0",
-    "scripts": {
-        "dev": "npx tsx watch index.ts"
-    }
-}

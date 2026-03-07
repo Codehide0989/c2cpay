@@ -1,0 +1,606 @@
+---
+/// <reference types="astro/client" />
+// AdminClient.astro
+import IntegrationDocs from "./IntegrationDocs.astro";
+---
+
+<div
+    id="authContainer"
+    class="max-w-md mx-auto mt-20 p-8 bg-slate-900 border border-slate-700 rounded-2xl shadow-xl flex flex-col items-center"
+>
+    <!-- SVG Icon for Lock -->
+    <svg
+        class="w-12 h-12 text-neon-blue mb-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+    >
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+        ></path>
+    </svg>
+    <h2 class="text-2xl font-bold text-white mb-6">Admin Access</h2>
+    <input
+        type="password"
+        id="adminPinInput"
+        placeholder="Enter PIN"
+        class="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-xl text-center text-xl text-white tracking-widest focus:border-neon-blue outline-none"
+    />
+    <p id="authErrorMsg" class="text-rose-400 mt-4 hidden"></p>
+    <button
+        id="unlockBtn"
+        class="mt-6 w-full bg-neon-blue text-black font-bold p-4 rounded-xl hover:bg-cyan-400 transition-colors"
+    >
+        Unlock
+    </button>
+</div>
+
+<div
+    id="dashboardContainer"
+    class="hidden max-w-5xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl"
+>
+    <div class="flex border-b border-slate-800">
+        <button
+            id="tabDashboard"
+            class="flex-1 p-4 font-bold bg-slate-800 text-neon-blue tab-btn"
+            data-target="panelDashboard">Dashboard</button
+        >
+        <button
+            id="tabSettings"
+            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
+            data-target="panelSettings">Settings</button
+        >
+        <button
+            id="tabHistory"
+            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
+            data-target="panelHistory">History</button
+        >
+        <button
+            id="tabApiKeys"
+            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
+            data-target="panelApiKeys">API Keys</button
+        >
+        <button
+            id="tabDocs"
+            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
+            data-target="panelDocs">Docs</button
+        >
+        <button
+            id="logoutBtn"
+            class="p-4 font-bold text-rose-500 hover:bg-rose-500/10 transition-colors border-l border-slate-800"
+            title="Sign Out"
+        >
+            <svg
+                class="w-5 h-5 mx-auto"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                ></path></svg
+            >
+        </button>
+    </div>
+
+    <div class="p-8 relative">
+        <!-- Dashboard Panel -->
+        <div id="panelDashboard" class="space-y-6 tab-panel block">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">
+                    Performance Overview
+                </h3>
+                <button
+                    id="refreshStatsBtn"
+                    class="p-2 text-slate-400 hover:text-neon-blue transition-colors"
+                    title="Refresh Streams"
+                >
+                    <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        ></path></svg
+                    >
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- KPI Cards -->
+                <div
+                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
+                >
+                    <p
+                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+                    >
+                        Total Trans.
+                    </p>
+                    <p id="statTotal" class="text-3xl font-black text-white">
+                        0
+                    </p>
+                </div>
+                <div
+                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
+                >
+                    <p
+                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+                    >
+                        Success Rate
+                    </p>
+                    <p
+                        id="statRate"
+                        class="text-3xl font-black text-emerald-400"
+                    >
+                        0%
+                    </p>
+                </div>
+                <div
+                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
+                >
+                    <p
+                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+                    >
+                        Revenue
+                    </p>
+                    <p
+                        id="statRevenue"
+                        class="text-3xl font-black text-neon-blue"
+                    >
+                        ₹ 0.00
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h4
+                    class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4"
+                >
+                    Live Timeline
+                </h4>
+                <div id="timelineList" class="space-y-3">
+                    <p class="text-slate-600 italic text-sm">
+                        Synchronizing data stream...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div id="panelSettings" class="space-y-6 tab-panel hidden">
+            <h3 class="text-xl font-bold text-white mb-4">
+                Merchant Configuration
+            </h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-slate-400 text-sm">VPA (UPI ID)</label>
+                    <input
+                        type="text"
+                        id="configPa"
+                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
+                    />
+                </div>
+                <div>
+                    <label class="text-slate-400 text-sm">Merchant Name</label>
+                    <input
+                        type="text"
+                        id="configPn"
+                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
+                    />
+                </div>
+                <div>
+                    <label class="text-slate-400 text-sm">Page Title</label>
+                    <input
+                        type="text"
+                        id="configTitle"
+                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
+                    />
+                </div>
+                <div>
+                    <label class="text-slate-400 text-sm">Redirect URL</label>
+                    <input
+                        type="text"
+                        id="configRedirect"
+                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
+                        placeholder="https://..."
+                    />
+                </div>
+            </div>
+
+            <div class="space-y-4 pt-4 border-t border-slate-800">
+                <div class="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="configLock"
+                        class="w-5 h-5 accent-neon-blue"
+                    />
+                    <label
+                        for="configLock"
+                        class="text-white font-bold cursor-pointer"
+                        >Lock Payment Amount by Default</label
+                    >
+                </div>
+                <div class="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="configMaint"
+                        class="w-5 h-5 accent-rose-500"
+                    />
+                    <label
+                        for="configMaint"
+                        class="text-rose-400 font-bold cursor-pointer"
+                        >Activate Maintenance Mode</label
+                    >
+                </div>
+            </div>
+            <button
+                id="saveConfigBtn"
+                class="bg-neon-blue text-black font-bold px-6 py-3 rounded-lg"
+                >Save Changes</button
+            >
+        </div>
+
+        <!-- History Panel -->
+        <div id="panelHistory" class="tab-panel hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">Payment History</h3>
+                <button
+                    id="refreshHistoryBtn"
+                    class="p-2 text-slate-400 hover:text-neon-blue transition-colors"
+                >
+                    <svg
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        ></path></svg
+                    >
+                </button>
+            </div>
+            <div id="historyList" class="space-y-2"></div>
+        </div>
+
+        <!-- API Keys Panel -->
+        <div id="panelApiKeys" class="tab-panel hidden">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">API Keys</h3>
+                <button
+                    id="genKeyBtn"
+                    class="bg-neon-blue text-black font-bold px-4 py-2 rounded-lg text-sm"
+                    >Generate New Key</button
+                >
+            </div>
+            <div id="apiKeysList" class="space-y-2"></div>
+        </div>
+
+        <!-- Docs Panel -->
+        <div id="panelDocs" class="tab-panel hidden">
+            <h3 class="text-xl font-bold text-white mb-6">
+                Integration Protocols
+            </h3>
+            <IntegrationDocs
+                baseUrl="/"
+                exampleLink="/?pa=test@upi&pn=Test%20Store&am=1.00&tn=Integration%20Test"
+            />
+        </div>
+    </div>
+</div>
+
+<script>
+    let sessionPin = "";
+
+    const authContainer = document.getElementById("authContainer");
+    const dashboardContainer = document.getElementById("dashboardContainer");
+    const adminPinInput = document.getElementById(
+        "adminPinInput",
+    ) as HTMLInputElement;
+    const unlockBtn = document.getElementById("unlockBtn") as HTMLButtonElement;
+    const authErrorMsg = document.getElementById("authErrorMsg");
+
+    const configPa = document.getElementById("configPa") as HTMLInputElement;
+    const configPn = document.getElementById("configPn") as HTMLInputElement;
+    const configTitle = document.getElementById(
+        "configTitle",
+    ) as HTMLInputElement;
+    const configRedirect = document.getElementById(
+        "configRedirect",
+    ) as HTMLInputElement;
+    const configLock = document.getElementById(
+        "configLock",
+    ) as HTMLInputElement;
+    const configMaint = document.getElementById(
+        "configMaint",
+    ) as HTMLInputElement;
+    const saveConfigBtn = document.getElementById("saveConfigBtn");
+
+    const historyList = document.getElementById("historyList");
+    const apiKeysList = document.getElementById("apiKeysList");
+    const genKeyBtn = document.getElementById("genKeyBtn");
+
+    // Tab Logic
+    const tabBtns = document.querySelectorAll(".tab-btn");
+    const tabPanels = document.querySelectorAll(".tab-panel");
+
+    tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            tabBtns.forEach((b) => {
+                b.classList.remove("bg-slate-800", "text-neon-blue");
+                b.classList.add("text-slate-400");
+            });
+            btn.classList.add("bg-slate-800", "text-neon-blue");
+            btn.classList.remove("text-slate-400");
+
+            tabPanels.forEach((p) => p.classList.add("hidden"));
+            const target = btn.getAttribute("data-target");
+            if (target) {
+                document.getElementById(target)?.classList.remove("hidden");
+            }
+
+            if (target === "panelDashboard") fetchStats();
+            if (target === "panelSettings") fetchConfig();
+            if (target === "panelHistory") fetchHistory();
+            if (target === "panelApiKeys") fetchApiKeys();
+        });
+    });
+
+    async function fetchStats() {
+        if (!sessionPin) return;
+        try {
+            const res = await fetch("/api/stats", {
+                headers: { "x-admin-pin": sessionPin },
+            });
+            const data = await res.json();
+
+            const statTotal = document.getElementById("statTotal");
+            if (statTotal) statTotal.innerText = data.total || "0";
+
+            const rate =
+                data.total > 0
+                    ? ((data.successCount / data.total) * 100).toFixed(1)
+                    : "0";
+            const statRate = document.getElementById("statRate");
+            if (statRate) statRate.innerText = rate + "%";
+
+            const statRevenue = document.getElementById("statRevenue");
+            if (statRevenue)
+                statRevenue.innerText =
+                    "₹ " + (data.totalAmount || 0).toFixed(2);
+
+            const timelineList = document.getElementById("timelineList");
+            if (timelineList && data.recent) {
+                timelineList.innerHTML = data.recent
+                    .map(
+                        (p: any) => `
+                    <div class="flex items-center justify-between bg-slate-800/30 p-3 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full ${p.status === "SUCCESS" ? "bg-emerald-500" : "bg-slate-600"}"></div>
+                            <span class="text-xs text-white font-bold">₹ ${p.amount}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500 font-mono">${new Date(p.createdAt).toLocaleTimeString()}</span>
+                    </div>
+                `,
+                    )
+                    .join("");
+                if (data.recent.length === 0) {
+                    timelineList.innerHTML =
+                        '<p class="text-slate-600 italic text-sm">No recent signals.</p>';
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const savedPin = localStorage.getItem("admin_session_pin");
+    if (savedPin) {
+        sessionPin = savedPin;
+        authContainer?.classList.add("hidden");
+        dashboardContainer?.classList.remove("hidden");
+        fetchStats();
+    }
+
+    const doAuth = async () => {
+        const pin = adminPinInput.value || (savedPin as string) || "";
+        if (!pin) return;
+        unlockBtn.innerText = "Verifying...";
+        unlockBtn.disabled = true;
+
+        try {
+            const res = await fetch("/api/admin", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "verify", pin }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                sessionPin = pin;
+                localStorage.setItem("admin_session_pin", pin);
+                authContainer?.classList.add("hidden");
+                dashboardContainer?.classList.remove("hidden");
+                fetchStats();
+            } else {
+                if (authErrorMsg) {
+                    authErrorMsg.innerText = data.error || "Invalid PIN";
+                    authErrorMsg.classList.remove("hidden");
+                    localStorage.removeItem("admin_session_pin");
+                }
+            }
+        } catch (e) {
+            if (authErrorMsg) {
+                authErrorMsg.innerText = "Connection failed";
+                authErrorMsg.classList.remove("hidden");
+            }
+        } finally {
+            unlockBtn.innerText = "Unlock";
+            unlockBtn.disabled = false;
+        }
+    };
+
+    const doLogout = () => {
+        sessionPin = "";
+        localStorage.removeItem("admin_session_pin");
+        dashboardContainer?.classList.add("hidden");
+        authContainer?.classList.remove("hidden");
+    };
+
+    document.getElementById("logoutBtn")?.addEventListener("click", doLogout);
+
+    unlockBtn?.addEventListener("click", doAuth);
+    adminPinInput?.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") doAuth();
+    });
+
+    async function fetchConfig() {
+        if (!sessionPin) return;
+        try {
+            const res = await fetch("/api/config", {
+                headers: { "x-admin-pin": sessionPin },
+            });
+            const data = await res.json();
+            if (configPa) configPa.value = data.pa || "";
+            if (configPn) configPn.value = data.pn || "";
+            if (configTitle) configTitle.value = data.title || "";
+            if (configRedirect) configRedirect.value = data.redirectUrl || "";
+            if (configLock) configLock.checked = !!data.amountLocked;
+            if (configMaint) configMaint.checked = !!data.maintenanceMode;
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function fetchHistory() {
+        if (!sessionPin || !historyList) return;
+        try {
+            const res = await fetch("/api/payment", {
+                headers: { "x-admin-pin": sessionPin },
+            });
+            const data = await res.json();
+            historyList.innerHTML = data
+                .map(
+                    (item: any) => `
+                <div class="bg-slate-800 p-4 rounded-lg flex justify-between items-center text-white">
+                    <div>
+                        <span class="font-bold text-lg">₹ ${item.amount}</span>
+                        <p class="text-xs text-slate-400">UTR: ${item.utr || "N/A"}</p>
+                    </div>
+                    <span class="px-3 py-1 text-xs font-bold rounded-full ${item.status === "SUCCESS" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}">
+                        ${item.status}
+                    </span>
+                </div>
+            `,
+                )
+                .join("");
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    async function fetchApiKeys() {
+        if (!sessionPin || !apiKeysList) return;
+        try {
+            window.deleteKey = async (id: string) => {
+                if (confirm("Are you sure?")) {
+                    await fetch("/api/apikey?id=" + id, {
+                        method: "DELETE",
+                        headers: { "x-admin-pin": sessionPin },
+                    });
+                    fetchApiKeys();
+                }
+            };
+            const res = await fetch("/api/apikey", {
+                headers: { "x-admin-pin": sessionPin },
+            });
+            const data = await res.json();
+            apiKeysList.innerHTML = (data.keys || [])
+                .map(
+                    (key: any) => `
+                <div class="bg-slate-800 p-4 rounded-lg flex justify-between items-center text-white">
+                    <div>
+                        <span class="font-bold">${key.name}</span>
+                    </div>
+                    <button onclick="deleteKey('${key.id}')" class="text-rose-400 text-sm font-bold">Revoke</button>
+                </div>
+            `,
+                )
+                .join("");
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    saveConfigBtn?.addEventListener("click", async () => {
+        if (!sessionPin) return;
+        try {
+            const res = await fetch("/api/config", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-admin-pin": sessionPin,
+                },
+                body: JSON.stringify({
+                    pa: configPa?.value,
+                    pn: configPn?.value,
+                    title: configTitle?.value,
+                    redirectUrl: configRedirect?.value,
+                    amountLocked: configLock?.checked,
+                    maintenanceMode: configMaint?.checked,
+                }),
+            });
+            if (res.ok) {
+                alert("Config saved!");
+            } else {
+                alert("Failed to save config: " + res.statusText);
+            }
+        } catch (e) {
+            alert("Failed to save config.");
+        }
+    });
+
+    genKeyBtn?.addEventListener("click", async () => {
+        const name = prompt("Enter a name for this key:");
+        if (!name) return;
+        try {
+            const res = await fetch("/api/apikey", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-admin-pin": sessionPin,
+                },
+                body: JSON.stringify({ name }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("Key generated: " + data.apiKey);
+                fetchApiKeys();
+            }
+        } catch (e) {
+            alert("Failed to generate key.");
+        }
+    });
+
+    document
+        .getElementById("refreshStatsBtn")
+        ?.addEventListener("click", fetchStats);
+    document
+        .getElementById("refreshHistoryBtn")
+        ?.addEventListener("click", fetchHistory);
+
+    declare global {
+        interface Window {
+            deleteKey: (id: string) => void;
+        }
+    }
+</script>

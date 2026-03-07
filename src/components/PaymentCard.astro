@@ -1,0 +1,560 @@
+---
+import MobileApps from "./MobileApps.astro";
+
+export interface Props {
+    config: {
+        pa: string;
+        pn: string;
+        tn?: string;
+        am?: string;
+        amountLocked?: boolean;
+        redirectUrl?: string;
+    };
+}
+
+const { config } = Astro.props;
+---
+
+<div
+    id="paymentCardContainer"
+    class="perspective-1000 w-full max-w-[340px] sm:max-w-[360px] mx-auto p-3 sm:p-4 transition-all duration-500 scale-[0.98] sm:scale-100"
+>
+    <!-- Success Screen (Hidden by default) -->
+    <div
+        id="successScreen"
+        class="hidden w-full max-w-[340px] sm:max-w-[360px] mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans scale-[0.98] sm:scale-100"
+    >
+        <div
+            class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 to-transparent"
+        >
+        </div>
+        <div class="relative z-10 pt-12 pb-10 px-8 flex flex-col items-center">
+            <div class="relative mb-8">
+                <div
+                    class="absolute inset-0 bg-emerald-500 rounded-full blur-xl opacity-40 animate-pulse"
+                >
+                </div>
+                <div
+                    class="relative w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/40 border-4 border-slate-900"
+                >
+                    <svg
+                        class="w-12 h-12 text-black stroke-[4] animate-in slide-in-from-bottom-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5 13l4 4L19 7"></path></svg
+                    >
+                </div>
+            </div>
+            <div class="text-center space-y-2 mb-8">
+                <p
+                    class="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400"
+                >
+                    Transaction Finalized
+                </p>
+                <h2
+                    class="text-3xl font-black text-white tracking-tighter italic"
+                >
+                    SUCCESSFUL
+                </h2>
+            </div>
+            <div
+                class="w-full bg-slate-800/50 backdrop-blur-md rounded-3xl p-6 border border-white/5 space-y-4 mb-8"
+            >
+                <div class="flex justify-between items-center text-xs">
+                    <span
+                        class="text-slate-500 font-bold uppercase tracking-widest"
+                        >Merchant</span
+                    >
+                    <span class="text-white font-bold">{config.pn}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span
+                        class="text-slate-500 text-xs font-bold uppercase tracking-widest"
+                        >Amount</span
+                    >
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-lg font-bold text-emerald-400">₹</span
+                        >
+                        <span
+                            id="successAmount"
+                            class="text-3xl font-black text-white tracking-tighter"
+                            >{config.am || "0.00"}</span
+                        >
+                    </div>
+                </div>
+                <div
+                    class="flex justify-between items-center text-[10px] pt-4 border-t border-white/5 font-mono"
+                >
+                    <span id="successUtr" class="text-slate-600"
+                        >UTR: VALIDATED</span
+                    >
+                    <span class="text-slate-600" id="successTime">--:--</span>
+                </div>
+            </div>
+            <div class="w-full space-y-3">
+                <p
+                    class="text-[10px] text-center text-slate-500 font-medium tracking-widest uppercase"
+                    id="redirectText"
+                >
+                    {
+                        config.redirectUrl
+                            ? "Handoff to Merchant..."
+                            : "Session Expiration"
+                    }
+                </p>
+                <div
+                    class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden"
+                >
+                    <div
+                        id="countdownBar"
+                        class="h-full bg-emerald-500 transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(16,185,129,0.5)]"
+                        style="width: 100%"
+                    >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div
+        id="mainCard"
+        class="relative w-full bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-500 group"
+    >
+        <div
+            id="cardGlow1"
+            class="absolute top-0 right-0 w-[300px] h-[300px] bg-neon-blue/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 transition-opacity duration-700 opacity-50"
+        >
+        </div>
+        <div
+            id="cardGlow2"
+            class="absolute bottom-0 left-0 w-[200px] h-[200px] bg-neon-purple/20 rounded-full blur-[60px] translate-y-1/2 -translate-x-1/2 transition-opacity duration-700 opacity-50"
+        >
+        </div>
+        <div
+            class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay pointer-events-none"
+        >
+        </div>
+
+        <div
+            class="relative z-10 p-5 flex flex-col items-center gap-4 sm:gap-5"
+        >
+            <!-- Header -->
+            <div class="text-center w-full">
+                <h2
+                    class="text-lg sm:text-xl font-bold text-white tracking-tight truncate px-2"
+                >
+                    {config.pn}
+                </h2>
+                <div
+                    id="copyVpaBtn"
+                    class="mt-2 inline-flex items-center gap-2 text-xs text-slate-400 bg-white/5 hover:bg-white/10 border border-white/5 py-1.5 px-4 rounded-full cursor-pointer transition-all active:scale-95"
+                    data-vpa="{config.pa}"
+                >
+                    <span class="truncate max-w-[200px]">{config.pa}</span>
+                    <svg
+                        class="w-3 h-3 text-neon-blue"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        ></path></svg
+                    >
+                </div>
+            </div>
+
+            <!-- Amount Input -->
+            <div class="w-full relative group">
+                <div
+                    class="absolute -inset-0.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-xl opacity-0 hover:opacity-30 transition duration-500 blur-sm"
+                >
+                </div>
+                <div
+                    class="relative bg-slate-800/80 rounded-xl p-1 border border-white/10"
+                >
+                    <div class="flex items-center justify-between px-4 py-2">
+                        <span
+                            class="text-xs text-slate-500 font-bold uppercase tracking-wider"
+                            >Amount</span
+                        >
+                        <span class="text-xs text-slate-500">INR</span>
+                    </div>
+                    <div class="flex items-center px-4 pb-2">
+                        <span class="text-2xl text-slate-400 font-light mr-2"
+                            >₹</span
+                        >
+                        <input
+                            type={config.amountLocked ? "text" : "number"}
+                            id="amountInput"
+                            value={config.am || ""}
+                            disabled={config.amountLocked}
+                            readonly={config.amountLocked}
+                            class={`w-full bg-transparent text-2xl font-bold text-white placeholder-slate-600 focus:outline-none ${config.amountLocked ? "opacity-70 cursor-not-allowed select-none" : ""}`}
+                            placeholder="0.00"
+                        />
+                        {
+                            config.amountLocked && (
+                                <svg
+                                    class="w-5 h-5 text-amber-500 ml-2 animate-pulse"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                    />
+                                </svg>
+                            )
+                        }
+                    </div>
+                    {
+                        config.amountLocked && (
+                            <div class="px-4 pb-2 flex items-center gap-1.5 text-[10px] text-amber-500/80 bg-amber-500/10 px-2 py-1 rounded-md border border-amber-500/20">
+                                <svg
+                                    class="w-3 h-3"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                    />
+                                </svg>
+                                <span class="font-medium uppercase tracking-wide">
+                                    Amount Locked by Merchant
+                                </span>
+                            </div>
+                        )
+                    }
+                </div>
+            </div>
+
+            <!-- QR Base Component Included from Layout later or hardcoded -->
+            <div class="relative w-full max-w-[180px] sm:max-w-[200px] mx-auto">
+                <div
+                    class="w-full aspect-square bg-white p-2.5 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-500 relative overflow-hidden"
+                >
+                    <img
+                        id="qrImage"
+                        src=""
+                        alt="UPI QR Code"
+                        class="w-full h-full object-contain mix-blend-multiply"
+                        loading="lazy"
+                    />
+                </div>
+                <!-- Loader Overlay -->
+                <div
+                    id="loaderOverlay"
+                    class="absolute inset-0 flex items-center justify-center z-20 backdrop-blur-sm bg-black/20 rounded-2xl hidden"
+                >
+                    <div class="flex flex-col items-center">
+                        <div
+                            class="bg-indigo-600 rounded-full p-4 mb-2 shadow-lg shadow-indigo-500/50"
+                        >
+                            <svg
+                                class="w-10 h-10 text-white animate-spin"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                                ></path></svg
+                            >
+                        </div>
+                        <span
+                            id="loaderText"
+                            class="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse uppercase tracking-wider"
+                            >Verifying...</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <MobileApps />
+
+            <!-- Manual & AI Verification Section -->
+            <div class="w-full pt-6 border-t border-white/10 space-y-4">
+                <!-- UTR Input Field -->
+                <div class="relative group">
+                    <input
+                        type="text"
+                        id="utrInput"
+                        maxlength="12"
+                        class="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-3 pl-4 pr-12 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-neon-purple transition-all font-mono tracking-widest"
+                        placeholder="ENTER 12-DIGIT UTR"
+                    />
+                    <button
+                        id="verifyBtn"
+                        class="absolute right-1 top-1 bottom-1 bg-white/10 hover:bg-neon-purple hover:text-white text-slate-400 rounded-lg px-3 transition-colors disabled:opacity-0"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path></svg
+                        >
+                    </button>
+                </div>
+
+                <!-- Screenshot Upload -->
+                <div class="relative">
+                    <input
+                        type="file"
+                        id="screenshotUpload"
+                        accept="image/*"
+                        class="hidden"
+                    />
+                    <label
+                        for="screenshotUpload"
+                        id="uploadLabel"
+                        class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-dashed border-slate-700 bg-slate-800/30 text-slate-400 text-xs font-medium cursor-pointer transition-all hover:bg-slate-800 hover:border-neon-blue hover:text-neon-blue hover:shadow-[0_0_15px_-5px_rgba(0,243,255,0.3)]"
+                    >
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                            ></path></svg
+                        >
+                        <span id="uploadText"
+                            >Upload Screenshot (AI Verify)</span
+                        >
+                    </label>
+                </div>
+
+                <!-- Error Message -->
+                <div
+                    id="errorBox"
+                    class="hidden flex items-center gap-2 text-rose-400 text-xs bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 animate-in fade-in slide-in-from-top-2"
+                >
+                    <svg
+                        class="w-4 h-4 shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path></svg
+                    >
+                    <span id="errorMsgText"></span>
+                    <button id="clearErrorBtn" class="ml-auto"
+                        ><svg
+                            class="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            ></path></svg
+                        ></button
+                    >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script define:vars={{ config }}>
+    const mainCard = document.getElementById("mainCard");
+    const successScreen = document.getElementById("successScreen");
+    const amountInput = document.getElementById("amountInput");
+    const qrImage = document.getElementById("qrImage");
+    const utrInput = document.getElementById("utrInput");
+    const verifyBtn = document.getElementById("verifyBtn");
+    const screenshotUpload = document.getElementById("screenshotUpload");
+    const errorBox = document.getElementById("errorBox");
+    const errorMsgText = document.getElementById("errorMsgText");
+    const clearErrorBtn = document.getElementById("clearErrorBtn");
+    const loaderOverlay = document.getElementById("loaderOverlay");
+    const loaderText = document.getElementById("loaderText");
+
+    function getAmount() {
+        // @ts-ignore
+        let urlParams = new URLSearchParams(window.location.search);
+        // @ts-ignore
+        return urlParams.get("am") || amountInput?.value || "0";
+    }
+
+    function updateLink() {
+        let am = getAmount();
+        let amFmt = am ? parseFloat(am).toFixed(2) : "0";
+        let link = `upi://pay?pa=${config.pa}&pn=${encodeURIComponent(config.pn)}&am=${amFmt}&cu=INR&tn=${encodeURIComponent(config.tn || "Payment")}`;
+        if (qrImage) {
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(link)}&bgcolor=ffffff`;
+        }
+        window.dispatchEvent(
+            new CustomEvent("updateUpiLink", { detail: link }),
+        );
+    }
+
+    amountInput?.addEventListener("input", updateLink);
+    updateLink();
+
+    // Mouse tilt logic
+    mainCard?.addEventListener("mousemove", (e) => {
+        // @ts-ignore
+        const rect = mainCard.getBoundingClientRect();
+        // @ts-ignore
+        const x = e.clientX - rect.left;
+        // @ts-ignore
+        const y = e.clientY - rect.top;
+        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -5;
+        const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 5;
+        // @ts-ignore
+        mainCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    mainCard?.addEventListener("mouseleave", () => {
+        // @ts-ignore
+        mainCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
+    });
+
+    function showError(msg) {
+        errorMsgText.innerText = msg;
+        errorBox.classList.remove("hidden");
+        mainCard.classList.add(
+            "border-rose-500/50",
+            "shadow-[0_0_50px_-10px_rgba(244,63,94,0.3)]",
+        );
+    }
+    function hideError() {
+        errorBox.classList.add("hidden");
+        mainCard.classList.remove(
+            "border-rose-500/50",
+            "shadow-[0_0_50px_-10px_rgba(244,63,94,0.3)]",
+        );
+    }
+    clearErrorBtn?.addEventListener("click", hideError);
+
+    function showSuccess(utr) {
+        document.getElementById("successAmount").innerText =
+            getAmount() || "0.00";
+        document.getElementById("successUtr").innerText = "UTR: " + utr;
+        document.getElementById("successTime").innerText =
+            new Date().toLocaleTimeString();
+        mainCard.classList.add("hidden");
+        successScreen.classList.remove("hidden");
+
+        let cd = 5;
+        const bar = document.getElementById("countdownBar");
+        let iv = setInterval(() => {
+            cd--;
+            if (cd < 0) {
+                clearInterval(iv);
+                if (
+                    config.redirectUrl &&
+                    config.redirectUrl.startsWith("http")
+                ) {
+                    window.location.href = config.redirectUrl;
+                } else {
+                    window.location.reload();
+                }
+            }
+            if (bar) bar.style.width = (cd / 5) * 100 + "%";
+        }, 1000);
+    }
+
+    verifyBtn?.addEventListener("click", () => {
+        let utrClean = utrInput?.value.trim() || "";
+        hideError();
+        const bannedUTRs = [
+            "123456789012",
+            "000000000000",
+            "111111111111",
+            "123123123123",
+            "121212121212",
+        ];
+        if (utrClean.length !== 12 || isNaN(Number(utrClean))) {
+            showError("Invalid UTR: Must be exactly 12 digits.");
+            return;
+        }
+        if (bannedUTRs.includes(utrClean) || /^(\d)\1+$/.test(utrClean)) {
+            showError("Payment Failed: Invalid or banned UTR detected.");
+            return;
+        }
+
+        loaderOverlay.classList.remove("hidden");
+        loaderText.innerText = "Verifying...";
+
+        setTimeout(() => {
+            loaderOverlay.classList.add("hidden");
+            showError(
+                "Automatic verification timed out. Please Upload Screenshot to verify instantly.",
+            );
+        }, 2500);
+    });
+
+    screenshotUpload?.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        hideError();
+        loaderOverlay.classList.remove("hidden");
+        loaderText.innerText = "AI Scanning...";
+
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+            const base64String = reader.result.split(",")[1];
+            try {
+                const apiRes = await fetch("/api/verify", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        imageBase64: base64String,
+                        expectedAmount: getAmount() || "0",
+                        expectedVpa: config.pa,
+                    }),
+                });
+                if (!apiRes.ok) throw new Error("Verification Server Error");
+                const result = await apiRes.json();
+                if (!result.isValid) {
+                    loaderOverlay.classList.add("hidden");
+                    showError(result.message);
+                    return;
+                }
+                const extractedUtr = result.extractedData?.utr;
+                const curUtr = utrInput.value.trim();
+                if (curUtr && extractedUtr && curUtr !== extractedUtr) {
+                    loaderOverlay.classList.add("hidden");
+                    showError(
+                        `UTR Mismatch: Entered '${curUtr}' but screenshot shows '${extractedUtr}'.`,
+                    );
+                    return;
+                }
+                loaderOverlay.classList.add("hidden");
+                showSuccess(extractedUtr || curUtr);
+            } catch (err) {
+                loaderOverlay.classList.add("hidden");
+                showError("Verification failed. Please try again.");
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+</script>

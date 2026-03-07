@@ -1,0 +1,38 @@
+---
+// QRGenerator.astro
+---
+
+<div
+    class="max-w-md mx-auto p-8 bg-slate-900 border border-slate-700 rounded-2xl shadow-xl flex flex-col items-center"
+>
+    <h2 class="text-xl font-bold text-white mb-4">Merchant QR Generator</h2>
+
+    <input
+        type="text"
+        id="upiLinkInput"
+        value="upi://pay?pa=shopc2c@upi&pn=ShopC2C&am=100"
+        class="w-full mb-6 p-3 bg-slate-800 border border-slate-700 rounded-lg text-white"
+        placeholder="UPI string..."
+    />
+
+    <div class="bg-white p-4 rounded-xl">
+        <img
+            id="qrImage"
+            src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=upi%3A%2F%2Fpay%3Fpa%3Dshopc2c%40upi%26pn%3DShopC2C%26am%3D100&bgcolor=ffffff"
+            alt="Generated QR Code"
+            class="w-[300px] h-[300px]"
+        />
+    </div>
+</div>
+
+<script>
+    const input = document.getElementById("upiLinkInput") as HTMLInputElement;
+    const qrImage = document.getElementById("qrImage") as HTMLImageElement;
+
+    if (input && qrImage) {
+        input.addEventListener("input", (e) => {
+            const val = (e.target as HTMLInputElement).value;
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(val)}&bgcolor=ffffff`;
+        });
+    }
+</script>

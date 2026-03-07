@@ -1,0 +1,14 @@
+---
+/// <reference types="astro/client" />
+import MainLayout from "../layouts/MainLayout.astro";
+import AdminClient from "../components/AdminClient.astro";
+
+// Server-side props or setup
+const title = "Admin Dashboard | ShopC2C";
+---
+
+<MainLayout title={title}>
+    <div class="pt-24 min-h-screen">
+        <AdminClient />
+    </div>
+</MainLayout>

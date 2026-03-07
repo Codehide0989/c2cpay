@@ -1,0 +1,279 @@
+---
+/// <reference types="astro/client" />
+// src/components/IntegrationDocs.astro
+interface Props {
+    baseUrl: string;
+    exampleLink: string;
+}
+
+const { baseUrl, exampleLink } = Astro.props;
+
+const htmlCode = `
+<!-- ShopC2C Atomic Payment Button -->
+<a href="${exampleLink}" 
+   target="_blank" 
+   style="background: linear-gradient(to right, #00f3ff, #d946ef); color: #000; padding: 14px 28px; text-decoration: none; border-radius: 12px; font-weight: 900; font-family: 'Outfit', sans-serif; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);">
+   SECURE UPI PAY
+</a>`.trim();
+
+const apiCurl = `
+# Backend Verification API
+curl -X POST ${baseUrl}api/verify \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "imageBase64": "IMAGE_DATA_HERE",
+    "expectedAmount": "100",
+    "expectedVpa": "merchant@upi"
+  }'`.trim();
+---
+
+<div class="space-y-8 text-slate-400">
+    <div
+        class="bg-neon-blue/5 border border-neon-blue/20 rounded-2xl p-6 backdrop-blur-xl relative overflow-hidden group"
+    >
+        <div
+            class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"
+        >
+            <svg
+                class="w-16 h-16 text-neon-blue"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                ></path></svg
+            >
+        </div>
+        <h4
+            class="flex items-center gap-3 text-neon-blue font-black uppercase tracking-[0.2em] text-sm mb-3"
+        >
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                ></path></svg
+            >
+            Neural Link Integration
+        </h4>
+        <p class="text-sm leading-relaxed max-w-md">
+            Integrate ShopC2C into any decentralized or legacy platform using
+            atomic URL parameters or our high-performance verification API.
+        </p>
+    </div>
+
+    <!-- Base Endpoint -->
+    <div class="space-y-3">
+        <label
+            class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1"
+            >Universal Base Endpoint</label
+        >
+        <div
+            class="flex items-center gap-4 bg-slate-900/80 p-4 rounded-2xl border border-white/5 font-mono text-sm text-white group relative overflow-hidden"
+        >
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-neon-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+            </div>
+            <span class="truncate flex-1 font-bold">{baseUrl}</span>
+            <button
+                class="copy-btn p-2 bg-white/5 hover:bg-neon-blue hover:text-black rounded-lg transition-all"
+                data-copy={baseUrl}
+            >
+                <svg
+                    class="w-4 h-4 icon-copy"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    ></path></svg
+                >
+                <svg
+                    class="w-4 h-4 icon-check hidden"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"></path></svg
+                >
+            </button>
+        </div>
+    </div>
+
+    <!-- API Protocol -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between px-1">
+            <label
+                class="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple flex items-center gap-2"
+            >
+                <svg
+                    class="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg
+                >
+                Core API Protocol
+            </label>
+            <span class="text-[9px] font-mono text-slate-600"
+                >v4.0.0-PROTOTYPE</span
+            >
+        </div>
+        <div class="relative group">
+            <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-neon-purple/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur"
+            >
+            </div>
+            <pre
+                class="relative bg-black/60 p-5 rounded-2xl border border-white/5 text-[11px] font-mono text-indigo-300 overflow-x-auto custom-scrollbar">{apiCurl}</pre>
+            <button
+                class="copy-btn absolute top-4 right-4 p-2 bg-white/5 hover:bg-neon-purple hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                data-copy={apiCurl}
+            >
+                <svg
+                    class="w-4 h-4 icon-copy"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    ></path></svg
+                >
+                <svg
+                    class="w-4 h-4 icon-check hidden"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"></path></svg
+                >
+            </button>
+        </div>
+    </div>
+
+    <!-- Atomic Params -->
+    <div class="space-y-4">
+        <label
+            class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 ml-1"
+            >Atomic Param Map</label
+        >
+        <div class="grid gap-3 font-mono text-[10px]">
+            {
+                [
+                    { key: "pa", val: "Merchant UPI ID Target" },
+                    { key: "pn", val: "Merchant Display Identifier" },
+                    { key: "am", val: "Transaction Quantum (Amount)" },
+                    { key: "tn", val: "Entropy String (Note/UTR)" },
+                    { key: "redirect_url", val: "Post-Success Handoff URL" },
+                ].map((p) => (
+                    <div class="flex items-center gap-4 bg-slate-900/40 p-3 rounded-xl border border-white/5 group hover:border-white/10 transition-colors">
+                        <span class="w-24 text-neon-blue font-black uppercase tracking-widest">
+                            {p.key}
+                        </span>
+                        <span class="text-slate-500 group-hover:text-slate-300 transition-colors">
+                            {p.val}
+                        </span>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+
+    <!-- Embed Button -->
+    <div class="space-y-4 pt-4">
+        <label
+            class="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 ml-1 flex items-center gap-2"
+        >
+            <svg
+                class="w-3.5 h-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg
+            >
+            High-Intensity Embed
+        </label>
+        <div class="relative group">
+            <pre
+                class="bg-[#020617] p-6 rounded-2xl border border-emerald-500/10 text-[11px] font-mono text-emerald-300 overflow-x-auto min-h-[140px] flex items-center">{htmlCode}</pre>
+            <button
+                class="copy-btn absolute top-4 right-4 p-3 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-black rounded-xl transition-all shadow-lg"
+                data-copy={htmlCode}
+            >
+                <svg
+                    class="w-4 h-4 icon-copy"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    ></path></svg
+                >
+                <svg
+                    class="w-4 h-4 icon-check hidden"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"></path></svg
+                >
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+            const text = btn.getAttribute("data-copy");
+            if (text) {
+                navigator.clipboard.writeText(text);
+                const iconCopy = btn.querySelector(".icon-copy");
+                const iconCheck = btn.querySelector(".icon-check");
+
+                iconCopy?.classList.add("hidden");
+                iconCheck?.classList.remove("hidden");
+
+                setTimeout(() => {
+                    iconCopy?.classList.remove("hidden");
+                    iconCheck?.classList.add("hidden");
+                }, 2000);
+            }
+        });
+    });
+</script>

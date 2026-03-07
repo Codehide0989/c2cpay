@@ -1,0 +1,315 @@
+---
+// SystemCheck.astro
+---
+
+<div
+    class="fixed inset-0 z-[100] bg-[#000510] flex flex-col items-center justify-center p-4 selection:bg-neon-blue selection:text-black font-sans"
+>
+    <div
+        class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none"
+    >
+        <div
+            class="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-blue/10 rounded-full blur-[100px] animate-pulse"
+        >
+        </div>
+        <div
+            class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-purple/10 rounded-full blur-[100px] animate-pulse delay-1000"
+        >
+        </div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md">
+        <div class="text-center mb-10">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-neon-blue to-neon-purple rounded-2xl shadow-[0_0_30px_rgba(0,243,255,0.2)] mb-4"
+            >
+                <svg class="w-8 h-8 text-black fill-current" viewBox="0 0 24 24"
+                    ><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
+                    ></path></svg
+                >
+            </div>
+            <h1
+                class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400"
+            >
+                ShopC2C
+            </h1>
+            <p
+                class="text-slate-500 text-sm font-medium tracking-wider uppercase mt-2"
+            >
+                Secure Payment Gateway
+            </p>
+        </div>
+
+        <div
+            class="bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden"
+        >
+            <div
+                id="progressBar"
+                class="absolute top-0 left-0 h-1 bg-gradient-to-r from-neon-blue to-neon-purple transition-all duration-500"
+                style="width: 0%"
+            >
+            </div>
+
+            <div class="flex flex-col items-center text-center space-y-6">
+                <div class="relative" id="iconContainer">
+                    <!-- Loading State Icon -->
+                    <div
+                        id="loadingRing"
+                        class="w-20 h-20 rounded-full border-4 border-slate-700 border-t-neon-blue animate-spin"
+                    >
+                    </div>
+                    <div
+                        id="innerIcon"
+                        class="absolute inset-0 flex items-center justify-center"
+                    >
+                        <svg
+                            class="w-6 h-6 text-slate-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
+                            ></path></svg
+                        >
+                    </div>
+
+                    <!-- Success State Icon -->
+                    <div
+                        id="successRing"
+                        class="hidden w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/50 flex items-center justify-center animate-in zoom-in"
+                    >
+                        <svg
+                            class="w-10 h-10 text-emerald-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M5 13l4 4L19 7"></path></svg
+                        >
+                    </div>
+
+                    <!-- Error State Icon -->
+                    <div
+                        id="errorRing"
+                        class="hidden w-20 h-20 rounded-full bg-rose-500/10 border border-rose-500/50 flex items-center justify-center animate-in zoom-in"
+                    >
+                        <svg
+                            class="w-10 h-10 text-rose-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            ></path></svg
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <h2
+                        id="statusMsg"
+                        class="text-xl font-bold text-white mb-2"
+                    >
+                        Initializing Secure Gateway...
+                    </h2>
+                    <p
+                        id="errorMsgDetail"
+                        class="hidden text-xs text-rose-400 bg-rose-950/30 p-2 rounded border border-rose-500/20 font-mono"
+                    >
+                    </p>
+                </div>
+
+                <!-- Steps Checklist -->
+                <div class="w-full space-y-3 pt-4 border-t border-slate-800">
+                    <div class="flex items-center justify-between text-sm">
+                        <span
+                            id="step1Label"
+                            class="transition-colors text-slate-500"
+                            >Environment Variables</span
+                        >
+                        <div id="step1Icon">
+                            <div
+                                class="w-4 h-4 rounded-full border border-slate-700"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span
+                            id="step2Label"
+                            class="transition-colors text-slate-500"
+                            >Server Reachability</span
+                        >
+                        <div id="step2Icon">
+                            <div
+                                class="w-4 h-4 rounded-full border border-slate-700"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span
+                            id="step3Label"
+                            class="transition-colors text-slate-500"
+                            >Database Connection</span
+                        >
+                        <div id="step3Icon">
+                            <div
+                                class="w-4 h-4 rounded-full border border-slate-700"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Retry Button -->
+                <button
+                    id="retryBtn"
+                    class="hidden mt-4 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all flex items-center justify-center gap-2 group"
+                >
+                    <svg
+                        class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        ><path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                        ></path></svg
+                    >
+                    Retry Connection
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center text-xs text-slate-600">
+            <p id="systemIdVal">System ID: ...</p>
+            <p class="mt-1">Ensuring secure end-to-end encryption</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const idVal = Math.random().toString(36).substring(7).toUpperCase();
+    const systemIdVal = document.getElementById("systemIdVal");
+    if (systemIdVal) systemIdVal.innerText = `System ID: ${idVal}`;
+
+    const progressBar = document.getElementById("progressBar");
+    const loadingRing = document.getElementById("loadingRing");
+    const innerIcon = document.getElementById("innerIcon");
+    const successRing = document.getElementById("successRing");
+    const errorRing = document.getElementById("errorRing");
+
+    const statusMsg = document.getElementById("statusMsg");
+    const errorMsgDetail = document.getElementById("errorMsgDetail");
+    const retryBtn = document.getElementById("retryBtn");
+
+    const checkIconHTML = `<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+    const waitIconHTML = `<div class="w-4 h-4 rounded-full border border-slate-700"></div>`;
+
+    const step1Label = document.getElementById("step1Label");
+    const step1Icon = document.getElementById("step1Icon");
+    const step2Label = document.getElementById("step2Label");
+    const step2Icon = document.getElementById("step2Icon");
+    const step3Label = document.getElementById("step3Label");
+    const step3Icon = document.getElementById("step3Icon");
+
+    function setStepStatus(step: number) {
+        if (progressBar) progressBar.style.width = `${(step / 3) * 100}%`;
+
+        if (step >= 1) {
+            step1Label?.classList.replace("text-slate-500", "text-slate-300");
+            if (step1Icon) step1Icon.innerHTML = checkIconHTML;
+        } else {
+            step1Label?.classList.replace("text-slate-300", "text-slate-500");
+            if (step1Icon) step1Icon.innerHTML = waitIconHTML;
+        }
+
+        if (step >= 2) {
+            step2Label?.classList.replace("text-slate-500", "text-slate-300");
+            if (step2Icon) step2Icon.innerHTML = checkIconHTML;
+            if (innerIcon)
+                innerIcon.innerHTML = `<svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>`;
+        } else {
+            step2Label?.classList.replace("text-slate-300", "text-slate-500");
+            if (step2Icon) step2Icon.innerHTML = waitIconHTML;
+            if (step === 1 && innerIcon) {
+                innerIcon.innerHTML = `<svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>`;
+            }
+        }
+
+        if (step >= 3) {
+            step3Label?.classList.replace("text-slate-500", "text-slate-300");
+            if (step3Icon) step3Icon.innerHTML = checkIconHTML;
+        } else {
+            step3Label?.classList.replace("text-slate-300", "text-slate-500");
+            if (step3Icon) step3Icon.innerHTML = waitIconHTML;
+        }
+    }
+
+    async function runDiagnostics() {
+        loadingRing?.classList.remove("hidden");
+        innerIcon?.classList.remove("hidden");
+        successRing?.classList.add("hidden");
+        errorRing?.classList.add("hidden");
+        retryBtn?.classList.add("hidden");
+        errorMsgDetail?.classList.add("hidden");
+        if (errorMsgDetail) errorMsgDetail.innerText = "";
+
+        setStepStatus(1);
+        if (statusMsg) statusMsg.innerText = "Pinging Server...";
+
+        try {
+            const start = Date.now();
+            const res = await fetch("/api/status");
+            if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+            const data = await res.json();
+            const latency = Date.now() - start;
+
+            setStepStatus(2);
+            if (statusMsg)
+                statusMsg.innerText = `Server Reachable (${latency}ms). Verifying DB...`;
+
+            if (
+                data.isConnected === true ||
+                data.dbConnection?.currentState === "CONNECTED"
+            ) {
+                setStepStatus(3);
+                if (statusMsg)
+                    statusMsg.innerText = "Database Connected Securely.";
+                loadingRing?.classList.add("hidden");
+                innerIcon?.classList.add("hidden");
+                successRing?.classList.remove("hidden");
+                setTimeout(() => (window.location.href = "/"), 1500);
+            } else {
+                throw new Error(
+                    `DB Status: ${data.dbConnection?.currentState || "Disconnected"}`,
+                );
+            }
+        } catch (e: any) {
+            loadingRing?.classList.add("hidden");
+            innerIcon?.classList.add("hidden");
+            errorRing?.classList.remove("hidden");
+            retryBtn?.classList.remove("hidden");
+            if (statusMsg) statusMsg.innerText = "Connection Failed";
+            if (errorMsgDetail) {
+                errorMsgDetail.innerText = `Error: ${e.message || "Unknown Error"}`;
+                errorMsgDetail.classList.remove("hidden");
+            }
+        }
+    }
+
+    retryBtn?.addEventListener("click", runDiagnostics);
+    runDiagnostics();
+</script>

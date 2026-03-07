@@ -1,34 +1,32 @@
 {
-  "name": "shopc2c---secure-upi-gateway",
+  "name": "shopc2c-secure-upi-gateway",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"cd server && npm run dev\" \"vite\"",
-    "build": "npx vite build",
-    "preview": "vite preview",
-    "db:setup": "tsx scripts/setupAppwrite.ts"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:seed": "prisma db seed"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@google/genai": "^1.33.0",
-    "@vercel/node": "^5.5.15",
-    "@vitejs/plugin-react": "^5.0.0",
-    "appwrite": "^23.0.0",
-    "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "lucide-react": "^0.561.0",
-    "node-appwrite": "^22.1.3",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@astrojs/node": "^9.0.2",
+    "@astrojs/tailwind": "^5.1.4",
+    "@google/generative-ai": "^0.24.1",
+    "@prisma/client": "^6.4.1",
+    "astro": "^5.4.1",
+    "prisma": "^6.4.1",
+    "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^22.14.0",
-    "concurrently": "^9.2.1",
-    "dotenv": "^17.2.3",
-    "tsx": "^4.21.0"
+    "@astrojs/check": "^0.9.6",
+    "@types/node": "^22.13.5",
+    "typescript": "^5.9.3"
   }
 }
