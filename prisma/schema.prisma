@@ -73,6 +73,8 @@ model Config {
 model ApiKey {
   id        String   @id @default(cuid())
   key       String   @unique
+  secret    String   @unique
   name      String
+  active    Boolean  @default(true)
   createdAt DateTime @default(now())
 }

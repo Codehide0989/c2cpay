@@ -120,7 +120,8 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             <h1 class="text-4xl font-black text-white tracking-tighter">
                 Command <span
                     class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple"
-                    >Center</span>
+                    >Center</span
+                >
             </h1>
         </div>
 
@@ -552,23 +553,20 @@ import IntegrationDocs from "./IntegrationDocs.astro";
                         <p
                             class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1"
                         >
-                            Cross-system protocols
+                            Live Key & Secret Pairs
                         </p>
                     </div>
                     <button
                         id="genKeyBtn"
                         class="bg-neon-blue text-black font-black px-8 py-4 rounded-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-[10px]"
-                        >Initialize Key</button
+                        >Generate Key Pair</button
                     >
                 </div>
-                <div
-                    id="apiKeysList"
-                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
-                >
+                <div id="apiKeysList" class="grid grid-cols-1 gap-4">
                     <p
                         class="col-span-full text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs font-bold"
                     >
-                        Encrypted pool empty
+                        No API keys generated yet
                     </p>
                 </div>
             </div>
@@ -595,6 +593,157 @@ import IntegrationDocs from "./IntegrationDocs.astro";
                         exampleLink="/?pa=test@upi&pn=Test%20Store&am=1.00&tn=Integration%20Test"
                     />
                 </div>
+            </div>
+        </div>
+
+        <!-- Key Generated Modal -->
+        <div
+            id="keyModal"
+            class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/80 backdrop-blur-xl p-4"
+        >
+            <div
+                class="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 md:p-10 max-w-lg w-full shadow-2xl shadow-neon-blue/10 animate-in fade-in zoom-in duration-500"
+            >
+                <div class="flex items-center gap-3 mb-6">
+                    <div
+                        class="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center"
+                    >
+                        <svg
+                            class="w-6 h-6 text-emerald-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                            ></path></svg
+                        >
+                    </div>
+                    <div>
+                        <h3
+                            class="text-xl font-black text-white tracking-tight"
+                        >
+                            Key Pair Generated
+                        </h3>
+                        <p
+                            class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]"
+                        >
+                            Save these credentials now
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 mb-6"
+                >
+                    <p
+                        class="text-rose-400 text-xs font-bold flex items-center gap-2"
+                    >
+                        <svg
+                            class="w-4 h-4 shrink-0"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                            ></path></svg
+                        >
+                        The secret will NOT be shown again. Copy it now!
+                    </p>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <!-- App Name -->
+                    <div>
+                        <label
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1.5 block"
+                            >Application Name</label
+                        >
+                        <div
+                            class="bg-slate-800/50 border border-white/5 rounded-xl px-4 py-3"
+                        >
+                            <span
+                                id="modalKeyName"
+                                class="text-white font-bold text-sm"></span>
+                        </div>
+                    </div>
+                    <!-- Live Key -->
+                    <div>
+                        <label
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-neon-blue mb-1.5 block"
+                            >Live Key (Public)</label
+                        >
+                        <div
+                            class="flex items-center gap-2 bg-slate-800/50 border border-neon-blue/20 rounded-xl px-4 py-3"
+                        >
+                            <code
+                                id="modalLiveKey"
+                                class="text-emerald-400 font-mono text-xs flex-1 break-all"
+                            ></code>
+                            <button
+                                id="copyLiveKey"
+                                class="shrink-0 p-2 bg-neon-blue/10 hover:bg-neon-blue hover:text-black rounded-lg transition-all text-neon-blue"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                    ></path></svg
+                                >
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Secret -->
+                    <div>
+                        <label
+                            class="text-[10px] font-black uppercase tracking-[0.2em] text-neon-purple mb-1.5 block"
+                            >Secret Key (Private)</label
+                        >
+                        <div
+                            class="flex items-center gap-2 bg-slate-800/50 border border-neon-purple/20 rounded-xl px-4 py-3"
+                        >
+                            <code
+                                id="modalSecret"
+                                class="text-amber-400 font-mono text-xs flex-1 break-all"
+                            ></code>
+                            <button
+                                id="copySecret"
+                                class="shrink-0 p-2 bg-neon-purple/10 hover:bg-neon-purple hover:text-black rounded-lg transition-all text-neon-purple"
+                            >
+                                <svg
+                                    class="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    ><path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                    ></path></svg
+                                >
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    id="closeKeyModal"
+                    class="w-full bg-white text-black font-black py-4 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.2em] text-xs"
+                >
+                    I've Saved My Credentials
+                </button>
             </div>
         </div>
     </div>
@@ -855,27 +1004,38 @@ import IntegrationDocs from "./IntegrationDocs.astro";
                 headers: { "x-admin-pin": sessionPin },
             });
             const data = await res.json();
+            const maskKey = (k: string) =>
+                k.substring(0, 12) + "••••••••" + k.substring(k.length - 4);
             apiKeysList.innerHTML = (data.keys || [])
                 .map(
                     (key: any) => `
-                <div class="bg-slate-800/40 p-6 rounded-[2rem] border border-white/5 flex justify-between items-center group">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/50 group-hover:text-neon-blue transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="bg-slate-800/40 p-6 rounded-[2rem] border border-white/5 hover:border-white/10 transition-all group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/50 group-hover:text-neon-blue transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </div>
+                            <div>
+                                <p class="font-black text-white text-sm uppercase tracking-tight">${key.name}</p>
+                                <p class="text-[10px] text-slate-500 font-mono mt-1">${maskKey(key.key)}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-black text-white text-sm uppercase tracking-tight">${key.name}</p>
-                            <p class="text-[8px] text-slate-600 font-bold uppercase tracking-[0.2em] mt-0.5 italic">Encrypted Secure ID</p>
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg ${key.active ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"}">${key.active ? "Active" : "Revoked"}</span>
+                            <button onclick="deleteKey('${key.id}')" class="text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/10 px-4 py-2 rounded-xl transition-all">Delete</button>
                         </div>
                     </div>
-                    <button onclick="deleteKey('${key.id}')" class="text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/10 px-4 py-2 rounded-xl transition-all">Revoke</button>
+                    <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+                        <span>Created: ${new Date(key.createdAt).toLocaleDateString()}</span>
+                        <span class="italic">Secret: ••••••••••••</span>
+                    </div>
                 </div>
             `,
                 )
                 .join("");
             if ((data.keys || []).length === 0) {
                 apiKeysList.innerHTML =
-                    '<p class="col-span-full text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs font-bold">Encrypted pool empty</p>';
+                    '<p class="col-span-full text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs font-bold">No API keys generated yet</p>';
             }
         } catch (e) {
             console.error(e);
@@ -915,9 +1075,65 @@ import IntegrationDocs from "./IntegrationDocs.astro";
         }
     });
 
+    // Key Modal Elements
+    const keyModal = document.getElementById("keyModal") as HTMLElement;
+    const modalLiveKey = document.getElementById("modalLiveKey") as HTMLElement;
+    const modalSecret = document.getElementById("modalSecret") as HTMLElement;
+    const modalKeyName = document.getElementById("modalKeyName") as HTMLElement;
+    const closeKeyModal = document.getElementById(
+        "closeKeyModal",
+    ) as HTMLButtonElement;
+    const copyLiveKey = document.getElementById(
+        "copyLiveKey",
+    ) as HTMLButtonElement;
+    const copySecret = document.getElementById(
+        "copySecret",
+    ) as HTMLButtonElement;
+
+    function showKeyModal(name: string, liveKey: string, secret: string) {
+        if (modalKeyName) modalKeyName.textContent = name;
+        if (modalLiveKey) modalLiveKey.textContent = liveKey;
+        if (modalSecret) modalSecret.textContent = secret;
+        if (keyModal) {
+            keyModal.classList.remove("hidden");
+            keyModal.classList.add("flex");
+        }
+    }
+
+    closeKeyModal?.addEventListener("click", () => {
+        if (keyModal) {
+            keyModal.classList.add("hidden");
+            keyModal.classList.remove("flex");
+        }
+    });
+
+    copyLiveKey?.addEventListener("click", () => {
+        const text = modalLiveKey?.textContent || "";
+        navigator.clipboard.writeText(text);
+        copyLiveKey.innerHTML =
+            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            copyLiveKey.innerHTML =
+                '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>';
+        }, 2000);
+    });
+
+    copySecret?.addEventListener("click", () => {
+        const text = modalSecret?.textContent || "";
+        navigator.clipboard.writeText(text);
+        copySecret.innerHTML =
+            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+        setTimeout(() => {
+            copySecret.innerHTML =
+                '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>';
+        }, 2000);
+    });
+
     genKeyBtn?.addEventListener("click", async () => {
-        const name = prompt("Assign label to new key:");
+        const name = prompt("Enter application name for this key pair:");
         if (!name) return;
+        genKeyBtn.textContent = "GENERATING...";
+        genKeyBtn.disabled = true;
         try {
             const res = await fetch("/api/apikey", {
                 method: "POST",
@@ -929,15 +1145,19 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             });
             const data = await res.json();
             if (data.success) {
-                alert(
-                    "SYSTEM KEY GENERATED: " +
-                        data.apiKey +
-                        "\n\nStore this immediately. It will not be shown again.",
-                );
+                showKeyModal(data.name, data.liveKey, data.secret);
                 fetchApiKeys();
+            } else {
+                alert(
+                    "Failed to generate key: " +
+                        (data.error || "Unknown error"),
+                );
             }
         } catch (e) {
-            alert("Key generation halted.");
+            alert("Key generation failed.");
+        } finally {
+            genKeyBtn.textContent = "GENERATE KEY PAIR";
+            genKeyBtn.disabled = false;
         }
     });
 

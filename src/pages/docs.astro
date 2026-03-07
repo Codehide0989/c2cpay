@@ -103,7 +103,9 @@ import MainLayout from "../layouts/MainLayout.astro";
                 class="text-slate-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
             >
                 Integrate ShopC2C's secure UPI payment gateway into your
-                application in minutes. Zero complexity, maximum security.
+                application in minutes. <span class="text-neon-blue font-bold"
+                    >No API key required</span
+                > — just use URL parameters to get started.
             </p>
         </header>
 
@@ -154,6 +156,99 @@ import MainLayout from "../layouts/MainLayout.astro";
                         </div>
                         <pre
                             class="p-4 overflow-x-auto text-sm"><code class="text-emerald-400">https://c2cpay.vercel.app/?pa=store@upi&pn=MyStore&am=500&locked=true&redirect_url=https://myshop.com/success</code></pre>
+                    </div>
+                </section>
+
+                <!-- No API Key Required Alert -->
+                <section
+                    class="doc-card group"
+                    style="border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.03);"
+                >
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20"
+                        >
+                            <svg
+                                class="w-4 h-4 text-emerald-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path></svg
+                            >
+                        </div>
+                        <h2
+                            class="text-lg sm:text-xl md:text-2xl font-black text-emerald-400 tracking-tight"
+                        >
+                            No API Key Needed
+                        </h2>
+                    </div>
+                    <p class="text-slate-300 text-sm md:text-base mb-4">
+                        ShopC2C works <strong class="text-white"
+                            >without any API key integration</strong
+                        >. Simply construct a payment URL with your UPI VPA and
+                        query parameters — no signup, no authentication token,
+                        no server-side setup required.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div
+                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                        >
+                            <svg
+                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path></svg
+                            >
+                            <span class="text-xs text-slate-300 font-bold"
+                                >No API Key</span
+                            >
+                        </div>
+                        <div
+                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                        >
+                            <svg
+                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path></svg
+                            >
+                            <span class="text-xs text-slate-300 font-bold"
+                                >No Server Setup</span
+                            >
+                        </div>
+                        <div
+                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                        >
+                            <svg
+                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path></svg
+                            >
+                            <span class="text-xs text-slate-300 font-bold"
+                                >Just URL Params</span
+                            >
+                        </div>
                     </div>
                 </section>
 
@@ -529,6 +624,28 @@ Content-Type: application/json
                             Integration Examples
                         </h2>
                     </div>
+                    <div
+                        class="bg-neon-blue/5 border border-neon-blue/10 rounded-xl p-3 mb-4"
+                    >
+                        <p
+                            class="text-neon-blue text-xs font-bold flex items-center gap-2"
+                        >
+                            <svg
+                                class="w-3.5 h-3.5 shrink-0"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a10.968 10.968 0 01-2 6.291A10.97 10.97 0 0112 22 10.97 10.97 0 013 18.291 10.968 10.968 0 011 12C1 5.925 5.925 1 12 1s11 4.925 11 11z"
+                                ></path></svg
+                            >
+                            These examples work without any API key — just copy and
+                            use!
+                        </p>
+                    </div>
                     <div class="space-y-4">
                         <div>
                             <h3
@@ -563,6 +680,125 @@ Content-Type: application/json
 {"}"}</code></pre>
                             </div>
                         </div>
+                        <div>
+                            <h3
+                                class="text-xs font-black uppercase tracking-widest text-slate-500 mb-2"
+                            >
+                                React / Next.js
+                            </h3>
+                            <div class="code-block">
+                                <pre
+                                    class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">// No API key, no backend, no SDK needed
+const PayButton = ({'{'}amount, upiId{'}'}) =&gt; (
+  &lt;a
+    href={'{'}&#96;https://c2cpay.vercel.app/?pa=${'{'}upiId{'}'}&amp;am=${'{'}amount{'}'}&amp;locked=true&#96;{'}'}
+    target="_blank"
+    rel="noopener noreferrer"
+  &gt;
+    Pay ₹{'{'}amount{'}'}
+  &lt;/a&gt;
+);</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Optional: API Key Authentication -->
+                <section class="doc-card">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center border border-amber-500/20"
+                        >
+                            <svg
+                                class="w-4 h-4 text-amber-400"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                                ></path></svg
+                            >
+                        </div>
+                        <h2
+                            class="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight"
+                        >
+                            API Keys <span
+                                class="text-amber-400 text-sm font-black"
+                                >(Optional)</span
+                            >
+                        </h2>
+                    </div>
+                    <p class="text-slate-400 text-sm md:text-base mb-4">
+                        For advanced server-to-server verification, you can
+                        optionally generate API key pairs from the <a
+                            href="/admin"
+                            class="text-neon-blue underline underline-offset-4 hover:text-white transition"
+                            >Admin Dashboard</a
+                        >.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div
+                            class="bg-white/[0.02] rounded-xl border border-white/5 p-4"
+                        >
+                            <h3
+                                class="text-sm font-bold text-neon-blue mb-2 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-5 h-5 rounded bg-neon-blue/20 text-neon-blue text-[10px] font-black flex items-center justify-center"
+                                    >1</span
+                                >
+                                Live Key (Public)
+                            </h3>
+                            <p class="text-xs text-slate-400 mb-2">
+                                Identifies your application. Safe to use in
+                                frontend.
+                            </p>
+                            <code class="text-emerald-400 text-xs font-mono"
+                                >pk_live_a1b2c3d4e5f6...</code
+                            >
+                        </div>
+                        <div
+                            class="bg-white/[0.02] rounded-xl border border-white/5 p-4"
+                        >
+                            <h3
+                                class="text-sm font-bold text-neon-purple mb-2 flex items-center gap-2"
+                            >
+                                <span
+                                    class="w-5 h-5 rounded bg-neon-purple/20 text-neon-purple text-[10px] font-black flex items-center justify-center"
+                                    >2</span
+                                >
+                                Secret Key (Private)
+                            </h3>
+                            <p class="text-xs text-slate-400 mb-2">
+                                Keep secret — use only on your backend server.
+                            </p>
+                            <code class="text-amber-400 text-xs font-mono"
+                                >sk_live_a1b2c3d4e5f6...</code
+                            >
+                        </div>
+                    </div>
+                    <div class="code-block">
+                        <div
+                            class="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/5 rounded-t-xl"
+                        >
+                            <span
+                                class="text-[10px] font-bold uppercase tracking-widest text-slate-500"
+                                >Server-side Verification with API Key</span
+                            >
+                        </div>
+                        <pre
+                            class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">curl -X POST https://c2cpay.vercel.app/api/verify \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: pk_live_YOUR_LIVE_KEY" \
+  -d '{"{"}'
+    "method": "utr",
+    "utr": "412345678901",
+    "amount": "500",
+    "pa": "store@upi"
+  {"}"}'</code></pre>
                     </div>
                 </section>
 

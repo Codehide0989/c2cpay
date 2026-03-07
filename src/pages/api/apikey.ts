@@ -11,7 +11,17 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     try {
-        const keys = await prisma.apiKey.findMany();
+        const keys = await prisma.apiKey.findMany({
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                key: true,
+                name: true,
+                active: true,
+                createdAt: true,
+                // Never expose secret in list view
+            }
+        });
         return new Response(JSON.stringify({ keys }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
         return new Response(JSON.stringify({ error: 'Failed' }), { status: 500 });
@@ -28,17 +38,29 @@ export const POST: APIRoute = async ({ request }) => {
 
     try {
         const body = await request.json();
-        const apiKey = 'sk_' + crypto.randomBytes(24).toString('hex');
+
+        // Generate live key (public identifier) and secret (private)
+        const liveKey = 'pk_live_' + crypto.randomBytes(20).toString('hex');
+        const secret = 'sk_live_' + crypto.randomBytes(32).toString('hex');
+
         await prisma.apiKey.create({
             data: {
                 name: body.name || 'New App Key',
-                key: apiKey,
+                key: liveKey,
+                secret: secret,
+                active: true,
             }
         });
 
-        return new Response(JSON.stringify({ success: true, apiKey }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+        // Return both key and secret — this is the ONLY time the secret is shown
+        return new Response(JSON.stringify({
+            success: true,
+            liveKey,
+            secret,
+            name: body.name || 'New App Key',
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Failed' }), { status: 500 });
+        return new Response(JSON.stringify({ error: 'Failed to generate key' }), { status: 500 });
     }
 };
 
