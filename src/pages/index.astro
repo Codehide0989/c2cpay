@@ -55,17 +55,17 @@ const config = {
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <span class="text-lg md:text-xl font-black tracking-tighter text-white leading-none">ShopC2C</span>
-                        <span class="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mt-0.5 md:mt-1">Merchant Node</span>
+                        <span class="text-base md:text-lg font-black tracking-tighter text-white leading-none">ShopC2C</span>
+                        <span class="text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 mt-0.5">Merchant Node</span>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 md:gap-6">
-                    <a href="/admin" class="group relative flex items-center gap-2 md:gap-3 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-xl border border-white/10 rounded-xl md:rounded-2xl px-3 md:px-5 py-2 md:py-2.5 transition-all active:scale-95 overflow-hidden font-sans">
+                <div class="flex items-center gap-2 md:gap-4">
+                    <a href="/docs" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-neon-blue transition px-2 py-2 hidden md:inline">Docs</a>
+                    <a href="/admin" class="group relative flex items-center gap-2 bg-slate-900/80 hover:bg-slate-800 backdrop-blur-xl border border-white/10 rounded-xl px-3 md:px-4 py-1.5 md:py-2 transition-all active:scale-95 overflow-hidden font-sans">
                         <div class="absolute inset-0 bg-gradient-to-r from-neon-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <!-- LayoutDashboard Icon -->
-                        <svg class="w-4 h-4 md:w-5 md:h-5 text-slate-400 group-hover:text-white md:group-hover:rotate-90 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h6v6H4zm10 0h6v6h-6zm-10 10h6v6H4zm10 0h6v6h-6z"/></svg>
-                        <span class="text-[10px] md:text-sm font-black uppercase tracking-widest text-white">Dashboard</span>
+                        <svg class="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 group-hover:text-white md:group-hover:rotate-90 transition-all duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h6v6H4zm10 0h6v6h-6zm-10 10h6v6H4zm10 0h6v6h-6z"/></svg>
+                        <span class="text-[10px] md:text-xs font-black uppercase tracking-widest text-white">Dashboard</span>
                     </a>
                 </div>
             </nav>
@@ -78,25 +78,25 @@ const config = {
                         Secure Gateway Node 4.0
                     </div>
                     <div class="space-y-4">
-                        <h1 class="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9]">
+                        <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tighter leading-[0.95]">
                             {config.title || "SECURE"} <br />
                             <span class="bg-clip-text text-transparent bg-gradient-to-r from-neon-blue via-indigo-400 to-neon-purple">PAYMENT</span>
                         </h1>
-                        <p class="text-slate-400 text-base md:text-lg lg:text-xl font-medium leading-relaxed max-w-md italic opacity-80 mx-auto lg:mx-0 font-sans">
-                            "{config.pn || 'ShopC2C Store'} is processing this transaction through a cryptographically secured peer-to-peer node."
+                        <p class="text-slate-400 text-sm md:text-base lg:text-lg font-medium leading-relaxed max-w-md italic opacity-80 mx-auto lg:mx-0 font-sans">
+                            "{config.pn || 'ShopC2C Store'} — cryptographically secured peer-to-peer payment node."
                         </p>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 md:gap-8 w-full border-t border-slate-800 pt-8">
                         <div>
-                            <p class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Carrier Layer</p>
+                            
                             <p class="text-sm md:text-lg font-bold text-white flex items-center justify-center lg:justify-start gap-2">
-                                HTTP/3 Edge 
+                                HTTPS/3 Edge 
                                 <svg class="w-3 h-3 md:w-4 md:h-4 text-neon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
                             </p>
                         </div>
                         <div>
-                            <p class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Protocol</p>
+                            
                             <p class="text-sm md:text-lg font-bold text-white flex items-center justify-center lg:justify-start gap-2">
                                 UPI Direct 
                                 <svg class="w-3 h-3 md:w-4 md:h-4 text-amber-400" viewBox="0 0 24 24" fill="currentColor"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
