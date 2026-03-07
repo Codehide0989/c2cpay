@@ -104,8 +104,8 @@ import MainLayout from "../layouts/MainLayout.astro";
             >
                 Integrate ShopC2C's secure UPI payment gateway into your
                 application in minutes. <span class="text-neon-blue font-bold"
-                    >No API key required</span
-                > — just use URL parameters to get started.
+                    >API key required</span
+                > — generate one from the Admin Dashboard to get started.
             </p>
         </header>
 
@@ -155,21 +155,21 @@ import MainLayout from "../layouts/MainLayout.astro";
                             >
                         </div>
                         <pre
-                            class="p-4 overflow-x-auto text-sm"><code class="text-emerald-400">https://c2cpay.vercel.app/?pa=store@upi&pn=MyStore&am=500&locked=true&redirect_url=https://myshop.com/success</code></pre>
+                            class="p-4 overflow-x-auto text-sm"><code class="text-emerald-400">https://c2cpay.vercel.app/?pa=store@upi&pn=MyStore&am=500&locked=true&redirect_url=https://myshop.com/success&api_key=pk_live_YOUR_KEY</code></pre>
                     </div>
                 </section>
 
-                <!-- No API Key Required Alert -->
+                <!-- API Key Required Alert -->
                 <section
                     class="doc-card group"
-                    style="border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.03);"
+                    style="border-color: rgba(0, 243, 255, 0.2); background: rgba(0, 243, 255, 0.03);"
                 >
                     <div class="flex items-center gap-3 mb-4">
                         <div
-                            class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20"
+                            class="w-8 h-8 rounded-lg bg-neon-blue/10 flex items-center justify-center border border-neon-blue/20"
                         >
                             <svg
-                                class="w-4 h-4 text-emerald-400"
+                                class="w-4 h-4 text-neon-blue"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -177,29 +177,33 @@ import MainLayout from "../layouts/MainLayout.astro";
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
                                 ></path></svg
                             >
                         </div>
                         <h2
-                            class="text-lg sm:text-xl md:text-2xl font-black text-emerald-400 tracking-tight"
+                            class="text-lg sm:text-xl md:text-2xl font-black text-neon-blue tracking-tight"
                         >
-                            No API Key Needed
+                            API Key Required
                         </h2>
                     </div>
                     <p class="text-slate-300 text-sm md:text-base mb-4">
-                        ShopC2C works <strong class="text-white"
-                            >without any API key integration</strong
-                        >. Simply construct a payment URL with your UPI VPA and
-                        query parameters — no signup, no authentication token,
-                        no server-side setup required.
+                        ShopC2C requires an <strong class="text-white"
+                            >API key for integration</strong
+                        >. Generate your Live Key and Secret Key from the
+                        <a
+                            href="/admin"
+                            class="text-neon-blue underline underline-offset-4 hover:text-white transition"
+                            >Admin Dashboard</a
+                        >
+                        to authenticate your payment requests.
                     </p>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div
-                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                            class="flex items-center gap-2 bg-neon-blue/5 border border-neon-blue/10 rounded-xl p-3"
                         >
                             <svg
-                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                class="w-4 h-4 text-neon-blue shrink-0"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -207,17 +211,18 @@ import MainLayout from "../layouts/MainLayout.astro";
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path></svg
+                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                                ></path></svg
                             >
                             <span class="text-xs text-slate-300 font-bold"
-                                >No API Key</span
+                                >API Key Required</span
                             >
                         </div>
                         <div
-                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                            class="flex items-center gap-2 bg-neon-blue/5 border border-neon-blue/10 rounded-xl p-3"
                         >
                             <svg
-                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                class="w-4 h-4 text-neon-blue shrink-0"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -225,17 +230,18 @@ import MainLayout from "../layouts/MainLayout.astro";
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path></svg
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                ></path></svg
                             >
                             <span class="text-xs text-slate-300 font-bold"
-                                >No Server Setup</span
+                                >Secure Authentication</span
                             >
                         </div>
                         <div
-                            class="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-3"
+                            class="flex items-center gap-2 bg-neon-blue/5 border border-neon-blue/10 rounded-xl p-3"
                         >
                             <svg
-                                class="w-4 h-4 text-emerald-400 shrink-0"
+                                class="w-4 h-4 text-neon-blue shrink-0"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -243,10 +249,11 @@ import MainLayout from "../layouts/MainLayout.astro";
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M5 13l4 4L19 7"></path></svg
+                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                                ></path></svg
                             >
                             <span class="text-xs text-slate-300 font-bold"
-                                >Just URL Params</span
+                                >Live + Secret Keys</span
                             >
                         </div>
                     </div>
@@ -389,7 +396,8 @@ import MainLayout from "../layouts/MainLayout.astro";
                                         >Lock amount (user cannot change)</td
                                     ></tr
                                 >
-                                <tr class="hover:bg-white/[0.02] transition"
+                                <tr
+                                    class="border-b border-white/5 hover:bg-white/[0.02] transition"
                                     ><td class="px-4 py-3"
                                         ><code
                                             class="text-neon-blue text-xs font-bold"
@@ -404,6 +412,23 @@ import MainLayout from "../layouts/MainLayout.astro";
                                     ><td
                                         class="px-4 py-3 text-xs text-slate-400"
                                         >Redirect URL after successful payment</td
+                                    ></tr
+                                >
+                                <tr class="hover:bg-white/[0.02] transition"
+                                    ><td class="px-4 py-3"
+                                        ><code
+                                            class="text-neon-blue text-xs font-bold"
+                                            >api_key</code
+                                        ></td
+                                    ><td class="px-4 py-3 text-xs">string</td
+                                    ><td class="px-4 py-3"
+                                        ><span
+                                            class="text-emerald-400 text-xs font-bold"
+                                            >Yes</span
+                                        ></td
+                                    ><td
+                                        class="px-4 py-3 text-xs text-slate-400"
+                                        >Your Live API Key (pk_live_...)</td
                                     ></tr
                                 >
                             </tbody>
@@ -543,7 +568,11 @@ import MainLayout from "../layouts/MainLayout.astro";
                         </h2>
                     </div>
                     <p class="text-slate-400 text-sm md:text-base mb-4">
-                        Two verification methods available:
+                        Two verification methods available. <strong
+                            class="text-white">Include your API key</strong
+                        > in the <code class="text-neon-blue text-xs"
+                            >x-api-key</code
+                        > header:
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div
@@ -562,6 +591,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                                 <pre
                                     class="p-3 overflow-x-auto"><code class="text-emerald-400">POST /api/verify
 Content-Type: application/json
+x-api-key: pk_live_YOUR_KEY
 
 {"{"}
   "method": "utr",
@@ -587,6 +617,7 @@ Content-Type: application/json
                                 <pre
                                     class="p-3 overflow-x-auto"><code class="text-emerald-400">POST /api/verify
 Content-Type: application/json
+x-api-key: pk_live_YOUR_KEY
 
 {"{"}
   "method": "screenshot",
@@ -625,10 +656,10 @@ Content-Type: application/json
                         </h2>
                     </div>
                     <div
-                        class="bg-neon-blue/5 border border-neon-blue/10 rounded-xl p-3 mb-4"
+                        class="bg-amber-500/5 border border-amber-500/10 rounded-xl p-3 mb-4"
                     >
                         <p
-                            class="text-neon-blue text-xs font-bold flex items-center gap-2"
+                            class="text-amber-400 text-xs font-bold flex items-center gap-2"
                         >
                             <svg
                                 class="w-3.5 h-3.5 shrink-0"
@@ -639,11 +670,12 @@ Content-Type: application/json
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a10.968 10.968 0 01-2 6.291A10.97 10.97 0 0112 22 10.97 10.97 0 013 18.291 10.968 10.968 0 011 12C1 5.925 5.925 1 12 1s11 4.925 11 11z"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                                 ></path></svg
                             >
-                            These examples work without any API key — just copy and
-                            use!
+                            Replace <code class="text-white"
+                                >pk_live_YOUR_KEY</code
+                            > with your actual Live Key from the Admin Dashboard.
                         </p>
                     </div>
                     <div class="space-y-4">
@@ -655,7 +687,7 @@ Content-Type: application/json
                             </h3>
                             <div class="code-block">
                                 <pre
-                                    class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">&lt;a href="https://c2cpay.vercel.app/?pa=shop@upi&amp;pn=MyShop&amp;am=299&amp;locked=true&amp;redirect_url=https://myshop.com/thanks"&gt;
+                                    class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">&lt;a href="https://c2cpay.vercel.app/?pa=shop@upi&amp;pn=MyShop&amp;am=299&amp;locked=true&amp;redirect_url=https://myshop.com/thanks&amp;api_key=pk_live_YOUR_KEY"&gt;
   Pay ₹299
 &lt;/a&gt;</code></pre>
                             </div>
@@ -669,12 +701,14 @@ Content-Type: application/json
                             <div class="code-block">
                                 <pre
                                     class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">function initiatePayment(amount) {"{"}
+  const API_KEY = 'pk_live_YOUR_KEY' // Your Live Key
   const params = new URLSearchParams({"{"}
     pa: 'shop@upi',
     pn: 'MyShop',
     am: amount.toString(),
     locked: 'true',
-    redirect_url: window.location.origin + '/success'
+    redirect_url: window.location.origin + '/success',
+    api_key: API_KEY
   {"}"})
   window.location.href = `https://c2cpay.vercel.app/?${"$"}{"{"}params{"}"}`
 {"}"}</code></pre>
@@ -688,10 +722,11 @@ Content-Type: application/json
                             </h3>
                             <div class="code-block">
                                 <pre
-                                    class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">// No API key, no backend, no SDK needed
+                                    class="p-4 overflow-x-auto text-xs"><code class="text-emerald-400">const API_KEY = 'pk_live_YOUR_KEY' // Your Live Key
+
 const PayButton = ({'{'}amount, upiId{'}'}) =&gt; (
   &lt;a
-    href={'{'}&#96;https://c2cpay.vercel.app/?pa=${'{'}upiId{'}'}&amp;am=${'{'}amount{'}'}&amp;locked=true&#96;{'}'}
+    href={'{'}&#96;https://c2cpay.vercel.app/?pa=${'{'}upiId{'}'}&amp;am=${'{'}amount{'}'}&amp;locked=true&amp;api_key=${'{'}API_KEY{'}'}&#96;{'}'}
     target="_blank"
     rel="noopener noreferrer"
   &gt;
@@ -726,18 +761,18 @@ const PayButton = ({'{'}amount, upiId{'}'}) =&gt; (
                             class="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight"
                         >
                             API Keys <span
-                                class="text-amber-400 text-sm font-black"
-                                >(Optional)</span
+                                class="text-emerald-400 text-sm font-black"
+                                >(Required)</span
                             >
                         </h2>
                     </div>
                     <p class="text-slate-400 text-sm md:text-base mb-4">
-                        For advanced server-to-server verification, you can
-                        optionally generate API key pairs from the <a
+                        Generate your API key pair from the <a
                             href="/admin"
                             class="text-neon-blue underline underline-offset-4 hover:text-white transition"
                             >Admin Dashboard</a
-                        >.
+                        > to authenticate payment requests. Both keys are required
+                        for a complete integration.
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div

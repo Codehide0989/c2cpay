@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client'
+import crypto from 'crypto'
+
 const prisma = new PrismaClient()
 
 async function main() {
@@ -17,12 +19,17 @@ async function main() {
     console.log({ config })
 
     console.log('Seeding initial API key...')
+    const devLiveKey = 'pk_live_' + crypto.randomBytes(20).toString('hex')
+    const devSecret = 'sk_live_' + crypto.randomBytes(32).toString('hex')
+
     await prisma.apiKey.upsert({
-        where: { key: 'test-api-key-123' },
+        where: { key: 'pk_live_dev_test_key_000000000000' },
         update: {},
         create: {
-            key: 'test-api-key-123',
-            name: 'Development Key'
+            key: 'pk_live_dev_test_key_000000000000',
+            secret: 'sk_live_dev_test_secret_0000000000000000000000000000000000',
+            name: 'Development Key',
+            active: true,
         }
     })
 
