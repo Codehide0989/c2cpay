@@ -17,12 +17,13 @@ const { config } = Astro.props;
 
 <div
     id="paymentCardContainer"
-    class="perspective-1000 w-full max-w-[340px] sm:max-w-[360px] mx-auto p-3 sm:p-4 transition-all duration-500 scale-[0.98] sm:scale-100"
+    class="perspective-1000 w-full max-w-[320px] sm:max-w-[340px] mx-auto p-3 sm:p-4 transition-all duration-500 scale-[0.98] sm:scale-100"
+    data-config={JSON.stringify(config)}
 >
     <!-- Success Screen (Hidden by default) -->
     <div
         id="successScreen"
-        class="hidden w-full max-w-[340px] sm:max-w-[360px] mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans scale-[0.98] sm:scale-100"
+        class="hidden w-full max-w-[320px] sm:max-w-[340px] mx-auto bg-slate-900 border border-emerald-500/30 rounded-3xl overflow-hidden shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500 relative font-sans scale-[0.98] sm:scale-100"
     >
         <div
             class="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-emerald-500/20 to-transparent"
@@ -382,30 +383,41 @@ const { config } = Astro.props;
     </div>
 </div>
 
-<script define:vars={{ config }}>
-    const mainCard = document.getElementById("mainCard");
-    const successScreen = document.getElementById("successScreen");
-    const amountInput = document.getElementById("amountInput");
-    const qrImage = document.getElementById("qrImage");
-    const utrInput = document.getElementById("utrInput");
-    const verifyBtn = document.getElementById("verifyBtn");
-    const screenshotUpload = document.getElementById("screenshotUpload");
-    const errorBox = document.getElementById("errorBox");
-    const errorMsgText = document.getElementById("errorMsgText");
-    const clearErrorBtn = document.getElementById("clearErrorBtn");
-    const loaderOverlay = document.getElementById("loaderOverlay");
-    const loaderText = document.getElementById("loaderText");
+<script>
+    const container = document.getElementById("paymentCardContainer");
+    const config = JSON.parse(container?.dataset.config || "{}");
+
+    const mainCard = document.getElementById("mainCard") as HTMLElement;
+    const successScreen = document.getElementById(
+        "successScreen",
+    ) as HTMLElement;
+    const amountInput = document.getElementById(
+        "amountInput",
+    ) as HTMLInputElement;
+    const qrImage = document.getElementById("qrImage") as HTMLImageElement;
+    const utrInput = document.getElementById("utrInput") as HTMLInputElement;
+    const verifyBtn = document.getElementById("verifyBtn") as HTMLButtonElement;
+    const screenshotUpload = document.getElementById(
+        "screenshotUpload",
+    ) as HTMLInputElement;
+    const errorBox = document.getElementById("errorBox") as HTMLElement;
+    const errorMsgText = document.getElementById("errorMsgText") as HTMLElement;
+    const clearErrorBtn = document.getElementById(
+        "clearErrorBtn",
+    ) as HTMLButtonElement;
+    const loaderOverlay = document.getElementById(
+        "loaderOverlay",
+    ) as HTMLElement;
+    const loaderText = document.getElementById("loaderText") as HTMLElement;
 
     function getAmount() {
-        // @ts-ignore
         let urlParams = new URLSearchParams(window.location.search);
-        // @ts-ignore
         return urlParams.get("am") || amountInput?.value || "0";
     }
 
     function updateLink() {
         let am = getAmount();
-        let amFmt = am ? parseFloat(am).toFixed(2) : "0";
+        let amFmt = am ? parseFloat(am).toFixed(2) : "0.00";
         let link = `upi://pay?pa=${config.pa}&pn=${encodeURIComponent(config.pn)}&am=${amFmt}&cu=INR&tn=${encodeURIComponent(config.tn || "Payment")}`;
         if (qrImage) {
             qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(link)}&bgcolor=ffffff`;
@@ -419,25 +431,21 @@ const { config } = Astro.props;
     updateLink();
 
     // Mouse tilt logic
-    mainCard?.addEventListener("mousemove", (e) => {
-        // @ts-ignore
+    mainCard?.addEventListener("mousemove", (e: MouseEvent) => {
         const rect = mainCard.getBoundingClientRect();
-        // @ts-ignore
         const x = e.clientX - rect.left;
-        // @ts-ignore
         const y = e.clientY - rect.top;
         const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -5;
         const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 5;
-        // @ts-ignore
         mainCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
 
     mainCard?.addEventListener("mouseleave", () => {
-        // @ts-ignore
         mainCard.style.transform = `rotateX(0deg) rotateY(0deg)`;
     });
 
-    function showError(msg) {
+    function showError(msg: string) {
+        if (!errorMsgText || !errorBox || !mainCard) return;
         errorMsgText.innerText = msg;
         errorBox.classList.remove("hidden");
         mainCard.classList.add(
@@ -446,6 +454,7 @@ const { config } = Astro.props;
         );
     }
     function hideError() {
+        if (!errorBox || !mainCard) return;
         errorBox.classList.add("hidden");
         mainCard.classList.remove(
             "border-rose-500/50",
@@ -454,14 +463,18 @@ const { config } = Astro.props;
     }
     clearErrorBtn?.addEventListener("click", hideError);
 
-    function showSuccess(utr) {
-        document.getElementById("successAmount").innerText =
-            getAmount() || "0.00";
-        document.getElementById("successUtr").innerText = "UTR: " + utr;
-        document.getElementById("successTime").innerText =
-            new Date().toLocaleTimeString();
-        mainCard.classList.add("hidden");
-        successScreen.classList.remove("hidden");
+    function showSuccess(utr: string) {
+        const successAmt = document.getElementById("successAmount");
+        const successUtrLabel = document.getElementById("successUtr");
+        const successTimeLabel = document.getElementById("successTime");
+
+        if (successAmt) successAmt.innerText = getAmount() || "0.00";
+        if (successUtrLabel) successUtrLabel.innerText = "UTR: " + utr;
+        if (successTimeLabel)
+            successTimeLabel.innerText = new Date().toLocaleTimeString();
+
+        if (mainCard) mainCard.classList.add("hidden");
+        if (successScreen) successScreen.classList.remove("hidden");
 
         let cd = 5;
         const bar = document.getElementById("countdownBar");
@@ -501,27 +514,29 @@ const { config } = Astro.props;
             return;
         }
 
-        loaderOverlay.classList.remove("hidden");
-        loaderText.innerText = "Verifying...";
+        if (loaderOverlay) loaderOverlay.classList.remove("hidden");
+        if (loaderText) loaderText.innerText = "Verifying...";
 
         setTimeout(() => {
-            loaderOverlay.classList.add("hidden");
+            if (loaderOverlay) loaderOverlay.classList.add("hidden");
             showError(
                 "Automatic verification timed out. Please Upload Screenshot to verify instantly.",
             );
         }, 2500);
     });
 
-    screenshotUpload?.addEventListener("change", (e) => {
-        const file = e.target.files?.[0];
+    screenshotUpload?.addEventListener("change", (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const file = target.files?.[0];
         if (!file) return;
         hideError();
-        loaderOverlay.classList.remove("hidden");
-        loaderText.innerText = "AI Scanning...";
+        if (loaderOverlay) loaderOverlay.classList.remove("hidden");
+        if (loaderText) loaderText.innerText = "AI Scanning...";
 
         const reader = new FileReader();
         reader.onloadend = async () => {
-            const base64String = reader.result.split(",")[1];
+            const result = reader.result as string;
+            const base64String = result.split(",")[1];
             try {
                 const apiRes = await fetch("/api/verify", {
                     method: "POST",
@@ -533,25 +548,25 @@ const { config } = Astro.props;
                     }),
                 });
                 if (!apiRes.ok) throw new Error("Verification Server Error");
-                const result = await apiRes.json();
-                if (!result.isValid) {
-                    loaderOverlay.classList.add("hidden");
-                    showError(result.message);
+                const resData = await apiRes.json();
+                if (!resData.isValid) {
+                    if (loaderOverlay) loaderOverlay.classList.add("hidden");
+                    showError(resData.message);
                     return;
                 }
-                const extractedUtr = result.extractedData?.utr;
-                const curUtr = utrInput.value.trim();
+                const extractedUtr = resData.extractedData?.utr;
+                const curUtr = utrInput?.value.trim();
                 if (curUtr && extractedUtr && curUtr !== extractedUtr) {
-                    loaderOverlay.classList.add("hidden");
+                    if (loaderOverlay) loaderOverlay.classList.add("hidden");
                     showError(
                         `UTR Mismatch: Entered '${curUtr}' but screenshot shows '${extractedUtr}'.`,
                     );
                     return;
                 }
-                loaderOverlay.classList.add("hidden");
+                if (loaderOverlay) loaderOverlay.classList.add("hidden");
                 showSuccess(extractedUtr || curUtr);
             } catch (err) {
-                loaderOverlay.classList.add("hidden");
+                if (loaderOverlay) loaderOverlay.classList.add("hidden");
                 showError("Verification failed. Please try again.");
             }
         };

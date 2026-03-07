@@ -55,19 +55,19 @@ const { title } = Astro.props;
   <body class="selection:bg-neon-blue selection:text-black">
     <slot />
 
-    <!-- Footer -->
+    <!-- Responsive Footer -->
     <footer
-      class="fixed bottom-0 left-0 w-full p-2 sm:p-4 md:p-8 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 md:gap-6 pointer-events-none opacity-40 bg-slate-950/50 backdrop-blur-sm md:bg-transparent z-20"
+      class="w-full p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 opacity-40 bg-slate-950/50 backdrop-blur-md z-20 border-t border-white/5"
     >
       <div
-        class="flex items-center gap-3 text-[8px] md:text-xs font-black uppercase tracking-[0.3em] text-slate-500"
+        class="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500"
       >
         <span>&copy; 2026 ShopC2C Infrastructure</span>
       </div>
-      <div class="flex items-center gap-4 md:gap-8">
+      <div class="flex items-center gap-8 flex-wrap justify-center">
         <div class="flex items-center gap-2">
           <svg
-            class="w-3 h-3 md:w-4 md:h-4 text-emerald-500/50"
+            class="w-4 h-4 text-emerald-500/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -78,13 +78,13 @@ const { title } = Astro.props;
               d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg
           >
           <span
-            class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500"
+            class="text-[10px] font-black uppercase tracking-widest text-slate-500"
             >Atomic Encryption</span
           >
         </div>
         <div class="flex items-center gap-2">
           <svg
-            class="w-3 h-3 md:w-4 md:h-4 text-neon-blue/50"
+            class="w-4 h-4 text-neon-blue/50"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -95,7 +95,7 @@ const { title } = Astro.props;
               d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg
           >
           <span
-            class="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500"
+            class="text-[10px] font-black uppercase tracking-widest text-slate-500"
             >L7 Health: 100%</span
           >
         </div>

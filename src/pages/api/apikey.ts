@@ -29,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
     try {
         const body = await request.json();
         const apiKey = 'sk_' + crypto.randomBytes(24).toString('hex');
-        const newKey = await prisma.apiKey.create({
+        await prisma.apiKey.create({
             data: {
                 name: body.name || 'New App Key',
                 key: apiKey,

@@ -1,4 +1,3 @@
-import type { APIContext } from 'astro';
 
 export const ADMIN_PIN = process.env.ADMIN_PIN || '1234';
 

@@ -6,168 +6,330 @@ import IntegrationDocs from "./IntegrationDocs.astro";
 
 <div
     id="authContainer"
-    class="max-w-md mx-auto mt-20 p-8 bg-slate-900 border border-slate-700 rounded-2xl shadow-xl flex flex-col items-center"
+    class="max-w-md mx-auto mt-20 p-10 bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-[0_0_50px_-12px_rgba(0,243,255,0.2)] flex flex-col items-center animate-in fade-in zoom-in duration-700"
 >
-    <!-- SVG Icon for Lock -->
-    <svg
-        class="w-12 h-12 text-neon-blue mb-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-    >
-        <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-        ></path>
-    </svg>
-    <h2 class="text-2xl font-bold text-white mb-6">Admin Access</h2>
-    <input
-        type="password"
-        id="adminPinInput"
-        placeholder="Enter PIN"
-        class="w-full bg-slate-800 border-2 border-slate-700 p-4 rounded-xl text-center text-xl text-white tracking-widest focus:border-neon-blue outline-none"
-    />
-    <p id="authErrorMsg" class="text-rose-400 mt-4 hidden"></p>
-    <button
-        id="unlockBtn"
-        class="mt-6 w-full bg-neon-blue text-black font-bold p-4 rounded-xl hover:bg-cyan-400 transition-colors"
-    >
-        Unlock
-    </button>
+    <!-- Modern Shield Icon -->
+    <div class="relative mb-8 group">
+        <div
+            class="absolute -inset-4 bg-neon-blue/20 rounded-full blur-2xl group-hover:bg-neon-blue/30 transition-all duration-500"
+        >
+        </div>
+        <div
+            class="relative w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500"
+        >
+            <svg
+                class="w-10 h-10 text-neon-blue"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                ></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-black text-white tracking-tighter mb-2">
+            RESTRICTED
+        </h2>
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">
+            Administrative Interface
+        </p>
+    </div>
+
+    <div class="w-full space-y-4">
+        <div class="relative">
+            <input
+                type="password"
+                id="adminPinInput"
+                placeholder="••••"
+                maxlength="4"
+                class="w-full bg-slate-800/50 border border-white/5 p-5 rounded-2xl text-center text-3xl text-white tracking-[0.5em] focus:border-neon-blue/50 focus:ring-4 focus:ring-neon-blue/10 outline-none transition-all placeholder:text-slate-700"
+            />
+            <div
+                class="absolute inset-y-0 right-4 flex items-center pointer-events-none opacity-20"
+            >
+                <svg
+                    class="w-5 h-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path></svg
+                >
+            </div>
+        </div>
+
+        <p
+            id="authErrorMsg"
+            class="text-rose-400 text-xs font-bold text-center hidden animate-pulse"
+        >
+        </p>
+
+        <button
+            id="unlockBtn"
+            class="group w-full relative overflow-hidden bg-white text-black font-black py-5 rounded-2xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+        >
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-neon-blue to-neon-purple opacity-0 group-hover:opacity-10 transition-opacity"
+            >
+            </div>
+            <span class="relative z-10 flex items-center justify-center gap-2">
+                AUTHENTICATE
+                <svg
+                    class="w-4 h-4 transition-transform group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path></svg
+                >
+            </span>
+        </button>
+    </div>
 </div>
 
 <div
     id="dashboardContainer"
-    class="hidden max-w-5xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl"
+    class="hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-in fade-in slide-in-from-bottom-4 duration-700"
 >
-    <div class="flex border-b border-slate-800">
-        <button
-            id="tabDashboard"
-            class="flex-1 p-4 font-bold bg-slate-800 text-neon-blue tab-btn"
-            data-target="panelDashboard">Dashboard</button
+    <!-- Premium Header -->
+    <div
+        class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10"
+    >
+        <div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="w-2 h-2 rounded-full bg-neon-blue animate-pulse"
+                ></span>
+                <span
+                    class="text-[10px] font-black text-neon-blue uppercase tracking-[0.3em]"
+                    >System Live</span
+                >
+            </div>
+            <h1 class="text-4xl font-black text-white tracking-tighter">
+                Command <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple"
+                    >Center</span>
+            </h1>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div
+            class="flex bg-slate-900/50 backdrop-blur-md p-1.5 rounded-2xl border border-white/5"
         >
-        <button
-            id="tabSettings"
-            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
-            data-target="panelSettings">Settings</button
-        >
-        <button
-            id="tabHistory"
-            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
-            data-target="panelHistory">History</button
-        >
-        <button
-            id="tabApiKeys"
-            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
-            data-target="panelApiKeys">API Keys</button
-        >
-        <button
-            id="tabDocs"
-            class="flex-1 p-4 font-bold text-slate-400 tab-btn"
-            data-target="panelDocs">Docs</button
-        >
-        <button
-            id="logoutBtn"
-            class="p-4 font-bold text-rose-500 hover:bg-rose-500/10 transition-colors border-l border-slate-800"
-            title="Sign Out"
-        >
-            <svg
-                class="w-5 h-5 mx-auto"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                ><path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                ></path></svg
+            <button
+                id="tabDashboard"
+                class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all tab-btn bg-white text-black"
+                data-target="panelDashboard">Overview</button
             >
-        </button>
+            <button
+                id="tabSettings"
+                class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all tab-btn text-slate-500 hover:text-white"
+                data-target="panelSettings">Config</button
+            >
+            <button
+                id="tabHistory"
+                class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all tab-btn text-slate-500 hover:text-white"
+                data-target="panelHistory">Logs</button
+            >
+            <button
+                id="tabApiKeys"
+                class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all tab-btn text-slate-500 hover:text-white"
+                data-target="panelApiKeys">API</button
+            >
+            <button
+                id="tabDocs"
+                class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all tab-btn text-slate-500 hover:text-white"
+                data-target="panelDocs">Docs</button
+            >
+            <div class="w-px h-8 bg-white/5 mx-2 self-center"></div>
+            <button
+                id="logoutBtn"
+                class="p-2.5 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20"
+                title="Sign Out"
+            >
+                <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    ></path></svg
+                >
+            </button>
+        </div>
     </div>
 
-    <div class="p-8 relative">
+    <!-- Main Content Panels -->
+    <div class="relative">
         <!-- Dashboard Panel -->
-        <div id="panelDashboard" class="space-y-6 tab-panel block">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white">
-                    Performance Overview
-                </h3>
-                <button
-                    id="refreshStatsBtn"
-                    class="p-2 text-slate-400 hover:text-neon-blue transition-colors"
-                    title="Refresh Streams"
-                >
-                    <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        ><path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        ></path></svg
-                    >
-                </button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+            id="panelDashboard"
+            class="space-y-8 tab-panel block animate-in fade-in duration-500"
+        >
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- KPI Cards -->
-                <div
-                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
-                >
-                    <p
-                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"
                     >
-                        Total Trans.
-                    </p>
-                    <p id="statTotal" class="text-3xl font-black text-white">
-                        0
-                    </p>
+                    </div>
+                    <div
+                        class="relative bg-slate-900 border border-white/5 p-8 rounded-3xl overflow-hidden"
+                    >
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg
+                                class="w-12 h-12 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"></path></svg
+                            >
+                        </div>
+                        <p
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4"
+                        >
+                            Total Transactions
+                        </p>
+                        <p
+                            id="statTotal"
+                            class="text-5xl font-black text-white italic tracking-tighter"
+                        >
+                            0
+                        </p>
+                    </div>
                 </div>
-                <div
-                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
-                >
-                    <p
-                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"
                     >
-                        Success Rate
-                    </p>
-                    <p
-                        id="statRate"
-                        class="text-3xl font-black text-emerald-400"
+                    </div>
+                    <div
+                        class="relative bg-slate-900 border border-white/5 p-8 rounded-3xl overflow-hidden"
                     >
-                        0%
-                    </p>
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg
+                                class="w-12 h-12 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"></path></svg
+                            >
+                        </div>
+                        <p
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4"
+                        >
+                            Integrity Rate
+                        </p>
+                        <p
+                            id="statRate"
+                            class="text-5xl font-black text-emerald-400 italic tracking-tighter"
+                        >
+                            0%
+                        </p>
+                    </div>
                 </div>
-                <div
-                    class="bg-slate-800/50 p-6 rounded-2xl border border-white/5"
-                >
-                    <p
-                        class="text-slate-400 text-xs font-black uppercase tracking-widest mb-2"
+
+                <div class="relative group sm:col-span-2 lg:col-span-1">
+                    <div
+                        class="absolute -inset-0.5 bg-gradient-to-r from-neon-blue to-neon-purple rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500"
                     >
-                        Revenue
-                    </p>
-                    <p
-                        id="statRevenue"
-                        class="text-3xl font-black text-neon-blue"
+                    </div>
+                    <div
+                        class="relative bg-slate-900 border border-white/5 p-8 rounded-3xl overflow-hidden"
                     >
-                        ₹ 0.00
-                    </p>
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <svg
+                                class="w-12 h-12 text-white"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"></path></svg
+                            >
+                        </div>
+                        <p
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4"
+                        >
+                            Gross Revenue
+                        </p>
+                        <p
+                            id="statRevenue"
+                            class="text-5xl font-black text-white italic tracking-tighter"
+                        >
+                            ₹ 0.00
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-8">
-                <h4
-                    class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4"
+            <div
+                class="bg-slate-900/40 backdrop-blur-sm border border-white/5 rounded-[2.5rem] p-8 lg:p-10"
+            >
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h3
+                            class="text-xl font-black text-white tracking-tight"
+                        >
+                            Activity Stream
+                        </h3>
+                        <p class="text-slate-500 text-xs font-medium">
+                            Real-time signal monitoring
+                        </p>
+                    </div>
+                    <button
+                        id="refreshStatsBtn"
+                        class="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl text-[10px] font-black text-white transition-all uppercase tracking-widest border border-white/5"
+                    >
+                        <svg
+                            class="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="3"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            ></path></svg
+                        >
+                        Refresh Stream
+                    </button>
+                </div>
+                <div
+                    id="timelineList"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
                 >
-                    Live Timeline
-                </h4>
-                <div id="timelineList" class="space-y-3">
-                    <p class="text-slate-600 italic text-sm">
+                    <p
+                        class="col-span-full text-slate-600 italic text-sm text-center py-20"
+                    >
                         Synchronizing data stream...
                     </p>
                 </div>
@@ -175,126 +337,265 @@ import IntegrationDocs from "./IntegrationDocs.astro";
         </div>
 
         <!-- Settings Panel -->
-        <div id="panelSettings" class="space-y-6 tab-panel hidden">
-            <h3 class="text-xl font-bold text-white mb-4">
-                Merchant Configuration
-            </h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-slate-400 text-sm">VPA (UPI ID)</label>
-                    <input
-                        type="text"
-                        id="configPa"
-                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
-                    />
-                </div>
-                <div>
-                    <label class="text-slate-400 text-sm">Merchant Name</label>
-                    <input
-                        type="text"
-                        id="configPn"
-                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
-                    />
-                </div>
-                <div>
-                    <label class="text-slate-400 text-sm">Page Title</label>
-                    <input
-                        type="text"
-                        id="configTitle"
-                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
-                    />
-                </div>
-                <div>
-                    <label class="text-slate-400 text-sm">Redirect URL</label>
-                    <input
-                        type="text"
-                        id="configRedirect"
-                        class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg text-white"
-                        placeholder="https://..."
-                    />
-                </div>
-            </div>
-
-            <div class="space-y-4 pt-4 border-t border-slate-800">
-                <div class="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        id="configLock"
-                        class="w-5 h-5 accent-neon-blue"
-                    />
-                    <label
-                        for="configLock"
-                        class="text-white font-bold cursor-pointer"
-                        >Lock Payment Amount by Default</label
-                    >
-                </div>
-                <div class="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        id="configMaint"
-                        class="w-5 h-5 accent-rose-500"
-                    />
-                    <label
-                        for="configMaint"
-                        class="text-rose-400 font-bold cursor-pointer"
-                        >Activate Maintenance Mode</label
-                    >
-                </div>
-            </div>
-            <button
-                id="saveConfigBtn"
-                class="bg-neon-blue text-black font-bold px-6 py-3 rounded-lg"
-                >Save Changes</button
+        <div
+            id="panelSettings"
+            class="hidden tab-panel space-y-8 animate-in fade-in duration-500"
+        >
+            <div
+                class="bg-slate-900 rounded-[2.5rem] border border-white/5 p-10"
             >
+                <h3
+                    class="text-2xl font-black text-white tracking-tighter mb-8 italic"
+                >
+                    MERCHANT IDENTITY
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-2">
+                        <label
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-widest pl-2"
+                            >VPA Target ID</label
+                        >
+                        <input
+                            type="text"
+                            id="configPa"
+                            class="w-full bg-slate-800/50 border border-white/5 p-4 rounded-2xl text-white font-mono focus:border-neon-blue outline-none transition-all placeholder:text-slate-700"
+                            placeholder="merchant@bank"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-widest pl-2"
+                            >Alias Name</label
+                        >
+                        <input
+                            type="text"
+                            id="configPn"
+                            class="w-full bg-slate-800/50 border border-white/5 p-4 rounded-2xl text-white font-bold focus:border-neon-blue outline-none transition-all"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-widest pl-2"
+                            >Meta Title</label
+                        >
+                        <input
+                            type="text"
+                            id="configTitle"
+                            class="w-full bg-slate-800/50 border border-white/5 p-4 rounded-2xl text-white font-bold focus:border-neon-blue outline-none transition-all"
+                        />
+                    </div>
+                    <div class="space-y-2">
+                        <label
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-widest pl-2"
+                            >Handoff URL</label
+                        >
+                        <input
+                            type="text"
+                            id="configRedirect"
+                            class="w-full bg-slate-800/50 border border-white/5 p-4 rounded-2xl text-white font-mono focus:border-neon-blue outline-none transition-all"
+                            placeholder="https://yourstore.com/success"
+                        />
+                    </div>
+                </div>
+
+                <div
+                    class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10 pt-10 border-t border-white/5"
+                >
+                    <label
+                        class="group relative flex items-center justify-between p-6 bg-slate-800/30 rounded-3xl border border-white/5 cursor-pointer hover:bg-slate-800/50 transition-all"
+                    >
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 bg-neon-blue/10 rounded-2xl flex items-center justify-center text-neon-blue"
+                            >
+                                <svg
+                                    class="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    ><path
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"></path></svg
+                                >
+                            </div>
+                            <div>
+                                <p
+                                    class="text-white font-black text-sm uppercase tracking-tight"
+                                >
+                                    Hard-Lock Amount
+                                </p>
+                                <p
+                                    class="text-slate-500 text-[10px] font-bold uppercase tracking-widest"
+                                >
+                                    Disable user manual input
+                                </p>
+                            </div>
+                        </div>
+                        <input
+                            type="checkbox"
+                            id="configLock"
+                            class="w-6 h-6 rounded-lg accent-neon-blue"
+                        />
+                    </label>
+
+                    <label
+                        class="group relative flex items-center justify-between p-6 bg-rose-500/5 rounded-3xl border border-rose-500/10 cursor-pointer hover:bg-rose-500/10 transition-all"
+                    >
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500"
+                            >
+                                <svg
+                                    class="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    ><path
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"></path></svg
+                                >
+                            </div>
+                            <div>
+                                <p
+                                    class="text-rose-400 font-black text-sm uppercase tracking-tight"
+                                >
+                                    Maintenace Vector
+                                </p>
+                                <p
+                                    class="text-rose-500/50 text-[10px] font-bold uppercase tracking-widest"
+                                >
+                                    Global system pause
+                                </p>
+                            </div>
+                        </div>
+                        <input
+                            type="checkbox"
+                            id="configMaint"
+                            class="w-6 h-6 rounded-lg accent-rose-500"
+                        />
+                    </label>
+                </div>
+
+                <div class="mt-10 flex justify-end">
+                    <button
+                        id="saveConfigBtn"
+                        class="bg-white text-black font-black px-12 py-5 rounded-[1.5rem] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-white/5 uppercase tracking-[0.2em] text-xs"
+                        >Commit Changes</button
+                    >
+                </div>
+            </div>
         </div>
 
         <!-- History Panel -->
-        <div id="panelHistory" class="tab-panel hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white">Payment History</h3>
-                <button
-                    id="refreshHistoryBtn"
-                    class="p-2 text-slate-400 hover:text-neon-blue transition-colors"
-                >
-                    <svg
-                        class="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        ><path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        ></path></svg
+        <div
+            id="panelHistory"
+            class="hidden tab-panel space-y-8 animate-in fade-in duration-500"
+        >
+            <div
+                class="bg-slate-900 rounded-[2.5rem] border border-white/5 p-8 lg:p-10"
+            >
+                <div class="flex items-center justify-between mb-10">
+                    <h3
+                        class="text-2xl font-black text-white italic tracking-tighter uppercase"
                     >
-                </button>
+                        Signal Logs
+                    </h3>
+                    <button
+                        id="refreshHistoryBtn"
+                        class="p-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all text-white"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            ><path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            ></path></svg
+                        >
+                    </button>
+                </div>
+                <div id="historyList" class="space-y-4">
+                    <p
+                        class="text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs"
+                    >
+                        No records in memory
+                    </p>
+                </div>
             </div>
-            <div id="historyList" class="space-y-2"></div>
         </div>
 
         <!-- API Keys Panel -->
-        <div id="panelApiKeys" class="tab-panel hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-white">API Keys</h3>
-                <button
-                    id="genKeyBtn"
-                    class="bg-neon-blue text-black font-bold px-4 py-2 rounded-lg text-sm"
-                    >Generate New Key</button
+        <div
+            id="panelApiKeys"
+            class="hidden tab-panel space-y-8 animate-in fade-in duration-500"
+        >
+            <div
+                class="bg-slate-900 rounded-[2.5rem] border border-white/5 p-10"
+            >
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-10"
                 >
+                    <div>
+                        <h3
+                            class="text-2xl font-black text-white italic tracking-tighter uppercase"
+                        >
+                            API Authentication
+                        </h3>
+                        <p
+                            class="text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1"
+                        >
+                            Cross-system protocols
+                        </p>
+                    </div>
+                    <button
+                        id="genKeyBtn"
+                        class="bg-neon-blue text-black font-black px-8 py-4 rounded-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-[10px]"
+                        >Initialize Key</button
+                    >
+                </div>
+                <div
+                    id="apiKeysList"
+                    class="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                    <p
+                        class="col-span-full text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs font-bold"
+                    >
+                        Encrypted pool empty
+                    </p>
+                </div>
             </div>
-            <div id="apiKeysList" class="space-y-2"></div>
         </div>
 
         <!-- Docs Panel -->
-        <div id="panelDocs" class="tab-panel hidden">
-            <h3 class="text-xl font-bold text-white mb-6">
-                Integration Protocols
-            </h3>
-            <IntegrationDocs
-                baseUrl="/"
-                exampleLink="/?pa=test@upi&pn=Test%20Store&am=1.00&tn=Integration%20Test"
-            />
+        <div
+            id="panelDocs"
+            class="hidden tab-panel space-y-8 animate-in fade-in duration-500"
+        >
+            <div
+                class="bg-slate-900 rounded-[2.5rem] border border-white/10 p-2 overflow-hidden"
+            >
+                <div class="p-8 border-b border-white/5">
+                    <h3
+                        class="text-2xl font-black text-white italic tracking-tighter uppercase"
+                    >
+                        Integration Protocol
+                    </h3>
+                </div>
+                <div class="p-8">
+                    <IntegrationDocs
+                        baseUrl="/"
+                        exampleLink="/?pa=test@upi&pn=Test%20Store&am=1.00&tn=Integration%20Test"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -302,13 +603,17 @@ import IntegrationDocs from "./IntegrationDocs.astro";
 <script>
     let sessionPin = "";
 
-    const authContainer = document.getElementById("authContainer");
-    const dashboardContainer = document.getElementById("dashboardContainer");
+    const authContainer = document.getElementById(
+        "authContainer",
+    ) as HTMLElement;
+    const dashboardContainer = document.getElementById(
+        "dashboardContainer",
+    ) as HTMLElement;
     const adminPinInput = document.getElementById(
         "adminPinInput",
     ) as HTMLInputElement;
     const unlockBtn = document.getElementById("unlockBtn") as HTMLButtonElement;
-    const authErrorMsg = document.getElementById("authErrorMsg");
+    const authErrorMsg = document.getElementById("authErrorMsg") as HTMLElement;
 
     const configPa = document.getElementById("configPa") as HTMLInputElement;
     const configPn = document.getElementById("configPn") as HTMLInputElement;
@@ -324,11 +629,13 @@ import IntegrationDocs from "./IntegrationDocs.astro";
     const configMaint = document.getElementById(
         "configMaint",
     ) as HTMLInputElement;
-    const saveConfigBtn = document.getElementById("saveConfigBtn");
+    const saveConfigBtn = document.getElementById(
+        "saveConfigBtn",
+    ) as HTMLButtonElement;
 
-    const historyList = document.getElementById("historyList");
-    const apiKeysList = document.getElementById("apiKeysList");
-    const genKeyBtn = document.getElementById("genKeyBtn");
+    const historyList = document.getElementById("historyList") as HTMLElement;
+    const apiKeysList = document.getElementById("apiKeysList") as HTMLElement;
+    const genKeyBtn = document.getElementById("genKeyBtn") as HTMLButtonElement;
 
     // Tab Logic
     const tabBtns = document.querySelectorAll(".tab-btn");
@@ -337,16 +644,17 @@ import IntegrationDocs from "./IntegrationDocs.astro";
     tabBtns.forEach((btn) => {
         btn.addEventListener("click", () => {
             tabBtns.forEach((b) => {
-                b.classList.remove("bg-slate-800", "text-neon-blue");
-                b.classList.add("text-slate-400");
+                b.classList.remove("bg-white", "text-black");
+                b.classList.add("text-slate-500", "hover:text-white");
             });
-            btn.classList.add("bg-slate-800", "text-neon-blue");
-            btn.classList.remove("text-slate-400");
+            btn.classList.add("bg-white", "text-black");
+            btn.classList.remove("text-slate-500", "hover:text-white");
 
             tabPanels.forEach((p) => p.classList.add("hidden"));
             const target = btn.getAttribute("data-target");
             if (target) {
-                document.getElementById(target)?.classList.remove("hidden");
+                const targetPanel = document.getElementById(target);
+                if (targetPanel) targetPanel.classList.remove("hidden");
             }
 
             if (target === "panelDashboard") fetchStats();
@@ -384,19 +692,24 @@ import IntegrationDocs from "./IntegrationDocs.astro";
                 timelineList.innerHTML = data.recent
                     .map(
                         (p: any) => `
-                    <div class="flex items-center justify-between bg-slate-800/30 p-3 rounded-lg border border-white/5">
-                        <div class="flex items-center gap-3">
-                            <div class="w-1.5 h-1.5 rounded-full ${p.status === "SUCCESS" ? "bg-emerald-500" : "bg-slate-600"}"></div>
-                            <span class="text-xs text-white font-bold">₹ ${p.amount}</span>
+                    <div class="flex items-center justify-between bg-slate-800/20 p-5 rounded-[1.5rem] border border-white/5 hover:border-white/10 transition-all group">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-2xl flex items-center justify-center ${p.status === "SUCCESS" ? "bg-emerald-500/10 text-emerald-500" : "bg-slate-500/10 text-slate-500"}">
+                                <span class="text-xs font-black">₹</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-black text-white tracking-tight">₹ ${p.amount}</p>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">${p.status}</p>
+                            </div>
                         </div>
-                        <span class="text-[10px] text-slate-500 font-mono">${new Date(p.createdAt).toLocaleTimeString()}</span>
+                        <span class="text-[10px] text-slate-600 font-black uppercase tracking-widest">${new Date(p.createdAt).toLocaleTimeString()}</span>
                     </div>
                 `,
                     )
                     .join("");
                 if (data.recent.length === 0) {
                     timelineList.innerHTML =
-                        '<p class="text-slate-600 italic text-sm">No recent signals.</p>';
+                        '<div class="col-span-full py-20 text-center"><p class="text-slate-600 italic text-xs uppercase tracking-[0.2em] font-bold">Quiet on the wire...</p></div>';
                 }
             }
         } catch (e) {
@@ -407,15 +720,15 @@ import IntegrationDocs from "./IntegrationDocs.astro";
     const savedPin = localStorage.getItem("admin_session_pin");
     if (savedPin) {
         sessionPin = savedPin;
-        authContainer?.classList.add("hidden");
-        dashboardContainer?.classList.remove("hidden");
+        if (authContainer) authContainer.classList.add("hidden");
+        if (dashboardContainer) dashboardContainer.classList.remove("hidden");
         fetchStats();
     }
 
     const doAuth = async () => {
         const pin = adminPinInput.value || (savedPin as string) || "";
         if (!pin) return;
-        unlockBtn.innerText = "Verifying...";
+        unlockBtn.innerText = "VERIFYING...";
         unlockBtn.disabled = true;
 
         try {
@@ -428,23 +741,29 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             if (data.success) {
                 sessionPin = pin;
                 localStorage.setItem("admin_session_pin", pin);
-                authContainer?.classList.add("hidden");
-                dashboardContainer?.classList.remove("hidden");
+                if (authContainer) authContainer.classList.add("hidden");
+                if (dashboardContainer)
+                    dashboardContainer.classList.remove("hidden");
                 fetchStats();
             } else {
                 if (authErrorMsg) {
-                    authErrorMsg.innerText = data.error || "Invalid PIN";
+                    authErrorMsg.innerText = data.error || "ACCESS DENIED";
                     authErrorMsg.classList.remove("hidden");
                     localStorage.removeItem("admin_session_pin");
                 }
             }
         } catch (e) {
             if (authErrorMsg) {
-                authErrorMsg.innerText = "Connection failed";
+                authErrorMsg.innerText = "COMMAND LINK FAILED";
                 authErrorMsg.classList.remove("hidden");
             }
         } finally {
-            unlockBtn.innerText = "Unlock";
+            unlockBtn.innerHTML = `
+                <span class="relative z-10 flex items-center justify-center gap-2">
+                    AUTHENTICATE
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </span>
+            `;
             unlockBtn.disabled = false;
         }
     };
@@ -452,8 +771,8 @@ import IntegrationDocs from "./IntegrationDocs.astro";
     const doLogout = () => {
         sessionPin = "";
         localStorage.removeItem("admin_session_pin");
-        dashboardContainer?.classList.add("hidden");
-        authContainer?.classList.remove("hidden");
+        if (dashboardContainer) dashboardContainer.classList.add("hidden");
+        if (authContainer) authContainer.classList.remove("hidden");
     };
 
     document.getElementById("logoutBtn")?.addEventListener("click", doLogout);
@@ -491,18 +810,30 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             historyList.innerHTML = data
                 .map(
                     (item: any) => `
-                <div class="bg-slate-800 p-4 rounded-lg flex justify-between items-center text-white">
-                    <div>
-                        <span class="font-bold text-lg">₹ ${item.amount}</span>
-                        <p class="text-xs text-slate-400">UTR: ${item.utr || "N/A"}</p>
+                <div class="bg-slate-800/40 p-6 rounded-[2rem] border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-5">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center text-white">
+                           <span class="font-black text-lg">₹</span>
+                        </div>
+                        <div>
+                            <p class="font-black text-2xl text-white tracking-tighter italic">₹ ${item.amount}</p>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Reference ID: ${item.utr || "UNRESOLVED"}</p>
+                        </div>
                     </div>
-                    <span class="px-3 py-1 text-xs font-bold rounded-full ${item.status === "SUCCESS" ? "bg-emerald-500/20 text-emerald-400" : "bg-rose-500/20 text-rose-400"}">
-                        ${item.status}
-                    </span>
+                    <div class="flex items-center gap-4">
+                        <span class="text-[10px] text-slate-600 font-black uppercase tracking-widest">${new Date(item.createdAt).toLocaleString()}</span>
+                        <span class="px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl ${item.status === "SUCCESS" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-rose-500/10 text-rose-400 border border-rose-500/20"}">
+                            ${item.status}
+                        </span>
+                    </div>
                 </div>
             `,
                 )
                 .join("");
+            if (data.length === 0) {
+                historyList.innerHTML =
+                    '<p class="text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs">No records in memory</p>';
+            }
         } catch (e) {
             console.error(e);
         }
@@ -511,8 +842,8 @@ import IntegrationDocs from "./IntegrationDocs.astro";
     async function fetchApiKeys() {
         if (!sessionPin || !apiKeysList) return;
         try {
-            window.deleteKey = async (id: string) => {
-                if (confirm("Are you sure?")) {
+            (window as any).deleteKey = async (id: string) => {
+                if (confirm("Permanently revoke this access key?")) {
                     await fetch("/api/apikey?id=" + id, {
                         method: "DELETE",
                         headers: { "x-admin-pin": sessionPin },
@@ -527,15 +858,25 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             apiKeysList.innerHTML = (data.keys || [])
                 .map(
                     (key: any) => `
-                <div class="bg-slate-800 p-4 rounded-lg flex justify-between items-center text-white">
-                    <div>
-                        <span class="font-bold">${key.name}</span>
+                <div class="bg-slate-800/40 p-6 rounded-[2rem] border border-white/5 flex justify-between items-center group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-white/50 group-hover:text-neon-blue transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div>
+                            <p class="font-black text-white text-sm uppercase tracking-tight">${key.name}</p>
+                            <p class="text-[8px] text-slate-600 font-bold uppercase tracking-[0.2em] mt-0.5 italic">Encrypted Secure ID</p>
+                        </div>
                     </div>
-                    <button onclick="deleteKey('${key.id}')" class="text-rose-400 text-sm font-bold">Revoke</button>
+                    <button onclick="deleteKey('${key.id}')" class="text-rose-500 text-[10px] font-black uppercase tracking-widest hover:bg-rose-500/10 px-4 py-2 rounded-xl transition-all">Revoke</button>
                 </div>
             `,
                 )
                 .join("");
+            if ((data.keys || []).length === 0) {
+                apiKeysList.innerHTML =
+                    '<p class="col-span-full text-slate-600 italic text-center py-20 uppercase tracking-widest text-xs font-bold">Encrypted pool empty</p>';
+            }
         } catch (e) {
             console.error(e);
         }
@@ -543,6 +884,8 @@ import IntegrationDocs from "./IntegrationDocs.astro";
 
     saveConfigBtn?.addEventListener("click", async () => {
         if (!sessionPin) return;
+        saveConfigBtn.innerText = "SAVING...";
+        saveConfigBtn.disabled = true;
         try {
             const res = await fetch("/api/config", {
                 method: "POST",
@@ -560,17 +903,20 @@ import IntegrationDocs from "./IntegrationDocs.astro";
                 }),
             });
             if (res.ok) {
-                alert("Config saved!");
+                alert("Protocol Updated Successfully");
             } else {
-                alert("Failed to save config: " + res.statusText);
+                alert("Commencing Save Error: " + res.statusText);
             }
         } catch (e) {
-            alert("Failed to save config.");
+            alert("Failed to reach terminal.");
+        } finally {
+            saveConfigBtn.innerText = "COMMIT CHANGES";
+            saveConfigBtn.disabled = false;
         }
     });
 
     genKeyBtn?.addEventListener("click", async () => {
-        const name = prompt("Enter a name for this key:");
+        const name = prompt("Assign label to new key:");
         if (!name) return;
         try {
             const res = await fetch("/api/apikey", {
@@ -583,11 +929,15 @@ import IntegrationDocs from "./IntegrationDocs.astro";
             });
             const data = await res.json();
             if (data.success) {
-                alert("Key generated: " + data.apiKey);
+                alert(
+                    "SYSTEM KEY GENERATED: " +
+                        data.apiKey +
+                        "\n\nStore this immediately. It will not be shown again.",
+                );
                 fetchApiKeys();
             }
         } catch (e) {
-            alert("Failed to generate key.");
+            alert("Key generation halted.");
         }
     });
 
